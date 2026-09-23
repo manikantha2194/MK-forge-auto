@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradWeb" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090B10" />
+      <stop offset="50%" stop-color="#0E121A" />
+      <stop offset="100%" stop-color="#05070A" />
+    </linearGradient>
+    <radialGradient id="glowWeb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF7A00" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#FF7A00" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bgGradWeb)" />
+  <circle cx="400" cy="230" r="220" fill="url(#glowWeb)" />
+
+  <!-- Code window frame -->
+  <g transform="translate(150, 80)">
+    <rect width="500" height="280" rx="14" fill="#0E1117" stroke="rgba(255,122,0,0.3)" stroke-width="1.5" />
+    <circle cx="26" cy="22" r="6" fill="#FF5F56" />
+    <circle cx="44" cy="22" r="6" fill="#FFBD2E" />
+    <circle cx="62" cy="22" r="6" fill="#27C93F" />
+    <line x1="0" y1="42" x2="500" y2="42" stroke="rgba(255,255,255,0.06)" />
+
+    <!-- Code lines -->
+    <rect x="30" y="65" width="120" height="12" rx="4" fill="#FF7A00" opacity="0.8" />
+    <rect x="160" y="65" width="80" height="12" rx="4" fill="#B8B8B8" opacity="0.4" />
+    <rect x="50" y="95" width="220" height="12" rx="4" fill="#61AFEF" opacity="0.7" />
+    <rect x="50" y="125" width="180" height="12" rx="4" fill="#98C379" opacity="0.7" />
+    <rect x="70" y="155" width="260" height="12" rx="4" fill="#E5C07B" opacity="0.7" />
+    <rect x="50" y="185" width="90" height="12" rx="4" fill="#61AFEF" opacity="0.7" />
+    <rect x="30" y="215" width="40" height="12" rx="4" fill="#FF7A00" opacity="0.8" />
+  </g>
+
+  <text x="400" y="420" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="28" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">
+    FULL-STACK WEB PLATFORM
+  </text>
+  <text x="400" y="450" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#FF7A00" text-anchor="middle" letter-spacing="4">
+    REACT • TYPESCRIPT • MODERN UI/UX
+  </text>
+</svg>

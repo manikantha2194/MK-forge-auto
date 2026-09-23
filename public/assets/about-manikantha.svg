@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 750" width="100%" height="100%">
+  <defs>
+    <!-- Background wall gradient -->
+    <linearGradient id="wallBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22252A" />
+      <stop offset="50%" stop-color="#1A1C20" />
+      <stop offset="100%" stop-color="#121316" />
+    </linearGradient>
+    <linearGradient id="suitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1C1D21" />
+      <stop offset="40%" stop-color="#111215" />
+      <stop offset="100%" stop-color="#08080A" />
+    </linearGradient>
+    <linearGradient id="suitLapel" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2B2D33" />
+      <stop offset="100%" stop-color="#121316" />
+    </linearGradient>
+    <linearGradient id="shirtGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#F0F2F5" />
+      <stop offset="100%" stop-color="#DCE0E6" />
+    </linearGradient>
+    <linearGradient id="skinTone" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DE9868" />
+      <stop offset="50%" stop-color="#CD8252" />
+      <stop offset="100%" stop-color="#B2673A" />
+    </linearGradient>
+    <linearGradient id="hairReal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#241E1C" />
+      <stop offset="50%" stop-color="#141110" />
+      <stop offset="100%" stop-color="#080606" />
+    </linearGradient>
+    <radialGradient id="aboutAura" cx="50%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#FF7A00" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#FF5500" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Architectural Wall Background with subtle vertical seam -->
+  <rect x="0" y="0" width="600" height="750" fill="url(#wallBg)" />
+  <line x1="240" y1="0" x2="240" y2="750" stroke="#2D3037" stroke-width="2" opacity="0.6" />
+  <line x1="480" y1="0" x2="480" y2="750" stroke="#2D3037" stroke-width="2" opacity="0.4" />
+  <circle cx="300" cy="240" r="280" fill="url(#aboutAura)" />
+
+  <!-- Subject: Manikantha in Tailored Black Suit -->
+  <g id="portrait-subject">
+    <!-- Suit Body -->
+    <path d="M 80 750 C 90 580, 160 480, 230 450 L 370 450 C 440 480, 510 580, 520 750 Z" fill="url(#suitGrad)" />
+
+    <!-- White Open-Collar Shirt -->
+    <path d="M 265 445 L 300 580 L 335 445 Z" fill="url(#shirtGrad)" />
+    <!-- Shirt Collar Wings -->
+    <path d="M 255 435 L 285 490 L 265 445 Z" fill="#FFFFFF" />
+    <path d="M 345 435 L 315 490 L 335 445 Z" fill="#FFFFFF" />
+    <!-- Button placket -->
+    <line x1="300" y1="490" x2="300" y2="580" stroke="#CBD2DC" stroke-width="1.5" />
+    <circle cx="300" cy="525" r="2.5" fill="#B8C0CC" />
+    <circle cx="300" cy="555" r="2.5" fill="#B8C0CC" />
+
+    <!-- Suit Lapels -->
+    <path d="M 230 450 L 275 580 L 255 585 L 205 470 Z" fill="url(#suitLapel)" stroke="#383A42" stroke-width="1" />
+    <path d="M 370 450 L 325 580 L 345 585 L 395 470 Z" fill="url(#suitLapel)" stroke="#383A42" stroke-width="1" />
+
+    <!-- Crossed Arms in front -->
+    <path d="M 130 570 C 180 540, 420 540, 470 570 C 490 680, 440 730, 300 730 C 160 730, 110 680, 130 570 Z" fill="url(#suitGrad)" stroke="#22242B" stroke-width="2" />
+    
+    <!-- Left Hand resting on Bicep -->
+    <g transform="translate(180, 580) rotate(-15)">
+      <path d="M 0 0 C 10 -15, 40 -15, 50 0 C 60 15, 30 35, 10 30 Z" fill="url(#skinTone)" />
+      <!-- Fingers -->
+      <path d="M 12 5 Q 35 10 32 24" stroke="#9A562B" stroke-width="1.5" fill="none" />
+      <path d="M 18 12 Q 40 18 36 30" stroke="#9A562B" stroke-width="1.5" fill="none" />
+    </g>
+
+    <!-- Cufflinks / White shirt cuff peek -->
+    <path d="M 305 675 L 325 675 L 325 690 L 305 690 Z" fill="#FFFFFF" rx="2" />
+
+    <!-- Neck & V-neck line -->
+    <path d="M 268 385 L 268 450 Q 300 480 332 450 L 332 385 Z" fill="url(#skinTone)" />
+    <path d="M 270 410 Q 300 440 330 410" fill="#99582E" opacity="0.3" />
+
+    <!-- Head & Jawline -->
+    <path d="M 225 250 C 225 365, 245 405, 300 405 C 355 405, 375 365, 375 250 C 375 160, 355 150, 300 150 C 245 150, 225 160, 225 250 Z" fill="url(#skinTone)" />
+
+    <!-- Ears -->
+    <path d="M 220 240 C 210 240, 210 285, 224 290 Z" fill="url(#skinTone)" />
+    <path d="M 380 240 C 390 240, 390 285, 376 290 Z" fill="url(#skinTone)" />
+
+    <!-- Neat Groomed Beard and Mustache -->
+    <path d="M 228 275 C 230 375, 255 408, 300 408 C 345 408, 370 375, 372 275 C 368 320, 345 390, 300 390 C 255 390, 232 320, 228 275 Z" fill="url(#hairReal)" />
+    <!-- Mustache -->
+    <path d="M 264 338 Q 300 332 336 338 Q 300 355 264 338 Z" fill="url(#hairReal)" />
+    <!-- Soul patch -->
+    <path d="M 293 360 L 307 360 L 304 374 L 296 374 Z" fill="url(#hairReal)" />
+
+    <!-- Radiant Smile with White Teeth -->
+    <path d="M 270 345 Q 300 368 330 345" stroke="#9A4E27" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    <path d="M 276 348 Q 300 362 324 348 Z" fill="#FFFFFF" />
+
+    <!-- Nose -->
+    <path d="M 295 270 L 293 318 Q 300 324 307 318 L 305 270" stroke="#AC6338" stroke-width="2.5" fill="none" stroke-linecap="round" />
+
+    <!-- Eyes & Brows -->
+    <path d="M 242 232 Q 268 218 288 228" stroke="url(#hairReal)" stroke-width="6.5" fill="none" stroke-linecap="round" />
+    <path d="M 312 228 Q 332 218 358 232" stroke="url(#hairReal)" stroke-width="6.5" fill="none" stroke-linecap="round" />
+
+    <ellipse cx="266" cy="248" rx="14" ry="9" fill="#FFFFFF" />
+    <circle cx="268" cy="248" r="6.5" fill="#301E14" />
+    <circle cx="269" cy="247" r="2.5" fill="#0A0604" />
+    <circle cx="270" cy="245" r="1.5" fill="#FFFFFF" />
+
+    <ellipse cx="334" cy="248" rx="14" ry="9" fill="#FFFFFF" />
+    <circle cx="332" cy="248" r="6.5" fill="#301E14" />
+    <circle cx="331" cy="247" r="2.5" fill="#0A0604" />
+    <circle cx="330" cy="245" r="1.5" fill="#FFFFFF" />
+
+    <!-- Thick Curly Black Hair -->
+    <g fill="url(#hairReal)">
+      <circle cx="300" cy="130" r="54" />
+      <circle cx="250" cy="140" r="50" />
+      <circle cx="350" cy="140" r="50" />
+      <circle cx="205" cy="170" r="46" />
+      <circle cx="395" cy="170" r="46" />
+      <circle cx="180" cy="220" r="40" />
+      <circle cx="420" cy="220" r="40" />
+      <circle cx="280" cy="115" r="38" />
+      <circle cx="320" cy="115" r="38" />
+      
+      <!-- Natural curls over forehead -->
+      <path d="M 195 205 C 215 160, 260 180, 280 195 C 295 180, 335 175, 360 190 C 385 175, 405 195, 400 220 C 375 200, 350 210, 340 220 C 310 210, 280 215, 260 225 C 240 215, 215 220, 195 205 Z" />
+    </g>
+
+    <!-- Warm golden-orange lighting accent on left shoulder & collar -->
+    <path d="M 85 745 C 95 600, 160 485, 230 455" stroke="#FF7A00" stroke-width="3" fill="none" opacity="0.5" />
+  </g>
+</svg>

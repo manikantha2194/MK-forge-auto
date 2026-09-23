@@ -1,0 +1,949 @@
+{
+  "users": [
+    {
+      "id": "usr-admin-1",
+      "email": "manimoram143@gmail.com",
+      "name": "Manikantha",
+      "passwordHash": "$2b$10$7rpSbfZfUehsubbjRYoStuipRlTBX1aev356DL6yaQRnGQ0mUvt9G",
+      "role": "admin"
+    },
+    {
+      "id": "usr-admin-2",
+      "email": "admin@manikantha.dev",
+      "name": "Manikantha (Admin)",
+      "passwordHash": "$2b$10$7rpSbfZfUehsubbjRYoStuipRlTBX1aev356DL6yaQRnGQ0mUvt9G",
+      "role": "admin"
+    }
+  ],
+  "profile": {
+    "name": "Manikantha",
+    "brandName": "forge_auto",
+    "shortGreeting": "HI, I'M MANI",
+    "mainHeadline": "FREELANCER",
+    "subHeadline": "AI/ML • WEB DESIGNER • CONTENT CREATOR",
+    "tagline": "Turning Ideas into Digital Reality",
+    "badges": [
+      "Innovate",
+      "Create",
+      "Automate",
+      "Grow"
+    ],
+    "aboutBio": [
+      "I am an enthusiastic AI/ML learner & developer, creative web designer, and digital content creator driven by the pursuit of futuristic technology and aesthetic precision.",
+      "My work bridges intelligent algorithms, high-performance web systems, and cinematic video storytelling to turn bold ideas into impactful reality.",
+      "Whether developing scalable web platforms, training predictive neural models, or automating repetitive business workflows, I focus on delivering seamless, human-centered experiences."
+    ],
+    "socials": {
+      "github": "https://github.com/manikantha",
+      "linkedin": "https://linkedin.com/in/manikantha",
+      "instagram": "https://instagram.com/manikantha",
+      "youtube": "https://youtube.com/@forge_auto",
+      "twitter": "https://twitter.com/manikantha",
+      "whatsappUrl": "https://wa.me/919999999999",
+      "email": "manimoram143@gmail.com"
+    },
+    "media": {
+      "heroCharacter": "/uploads/test-char-1790156778912-713222.svg",
+      "aboutPhoto": "/assets/about-manikantha.svg",
+      "brandIcon": "/assets/mk-logo.svg",
+      "brandBanner": "/assets/mk-forge-auto.svg"
+    }
+  },
+  "stats": [
+    {
+      "id": "stat-1",
+      "value": "50+",
+      "label": "Projects",
+      "highlight": "Delivered Worldwide",
+      "iconName": "FolderGit2"
+    },
+    {
+      "id": "stat-2",
+      "value": "100%",
+      "label": "Dedication",
+      "highlight": "Precision Execution",
+      "iconName": "Target"
+    },
+    {
+      "id": "stat-3",
+      "value": "∞",
+      "label": "Learning",
+      "highlight": "Always Evolving",
+      "iconName": "Infinity"
+    },
+    {
+      "id": "stat-4",
+      "value": "Happy",
+      "label": "Clients",
+      "highlight": "Global Collaboration",
+      "iconName": "Users"
+    },
+    {
+      "id": "stat-5",
+      "value": "Freelancer",
+      "label": "Always Building",
+      "highlight": "Open to New Ideas",
+      "iconName": "Trophy"
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "Autonomous AI Computer Vision Pipeline",
+      "description": "High-throughput object detection and semantic classification pipeline using PyTorch, OpenCV, and edge-optimized neural inference.",
+      "technologies": [
+        "Python",
+        "PyTorch",
+        "OpenCV",
+        "FastAPI",
+        "Docker"
+      ],
+      "category": "AI/ML",
+      "imageUrl": "/assets/project-ai.svg",
+      "githubUrl": "https://github.com/manikantha/ai-vision-pipeline",
+      "liveUrl": "https://ai-vision.manikantha.dev",
+      "featured": true,
+      "createdAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "proj-2",
+      "title": "NextGen Agency Web Suite",
+      "description": "Modern high-performance web experience featuring GPU-accelerated motion, dynamic dark mode theming, and headless CMS integration.",
+      "technologies": [
+        "React",
+        "TypeScript",
+        "Tailwind CSS",
+        "Motion",
+        "Vite"
+      ],
+      "category": "Web",
+      "imageUrl": "/assets/project-web.svg",
+      "githubUrl": "https://github.com/manikantha/nextgen-agency-suite",
+      "liveUrl": "https://agency.manikantha.dev",
+      "featured": true,
+      "createdAt": "2026-02-10T14:30:00.000Z"
+    },
+    {
+      "id": "proj-3",
+      "title": "OmniFlow Cloud Automation Hub",
+      "description": "Multi-tenant automation framework that coordinates webhooks, scheduled tasks, and CRM synchronization with real-time telemetry.",
+      "technologies": [
+        "Python",
+        "Node.js",
+        "Redis",
+        "Webhooks",
+        "PostgreSQL"
+      ],
+      "category": "Automation",
+      "imageUrl": "/assets/project-automation.svg",
+      "githubUrl": "https://github.com/manikantha/omniflow-automation",
+      "liveUrl": "https://omniflow.manikantha.dev",
+      "featured": true,
+      "createdAt": "2026-03-05T09:15:00.000Z"
+    },
+    {
+      "id": "proj-4",
+      "title": "Cinematic Tech Showreels & Motion Graphics",
+      "description": "High-impact video editing series featuring customized 3D titles, sound design, rhythmic cuts, and dynamic color grading for tech products.",
+      "technologies": [
+        "Premiere Pro",
+        "After Effects",
+        "DaVinci Resolve",
+        "Blender"
+      ],
+      "category": "Video Editing",
+      "imageUrl": "/assets/project-video.svg",
+      "githubUrl": "https://github.com/manikantha/motion-reels",
+      "liveUrl": "https://youtube.com/@forge_auto",
+      "featured": true,
+      "createdAt": "2026-04-12T16:00:00.000Z"
+    },
+    {
+      "id": "proj-5",
+      "title": "Smart Content Repurposing Engine",
+      "description": "Automated system that digests long-form video podcasts, transcribes with Whisper, and renders captioned short-form clips.",
+      "technologies": [
+        "Python",
+        "FFmpeg",
+        "Whisper AI",
+        "AWS S3"
+      ],
+      "category": "Content",
+      "imageUrl": "/assets/project-ai.svg",
+      "githubUrl": "https://github.com/manikantha/content-repurposer",
+      "liveUrl": "https://repurpose.manikantha.dev",
+      "featured": false,
+      "createdAt": "2026-05-18T11:45:00.000Z"
+    },
+    {
+      "id": "proj-6",
+      "title": "Interactive 3D Web Visualizer",
+      "description": "WebGL-driven interactive product showcase with customizable particle lighting, ambient orange glows, and smooth camera transitions.",
+      "technologies": [
+        "Three.js",
+        "WebGL",
+        "React",
+        "TypeScript"
+      ],
+      "category": "Web",
+      "imageUrl": "/assets/project-web.svg",
+      "githubUrl": "https://github.com/manikantha/webgl-visualizer",
+      "liveUrl": "https://visuals.manikantha.dev",
+      "featured": false,
+      "createdAt": "2026-06-22T13:20:00.000Z"
+    }
+  ],
+  "content": [
+    {
+      "id": "cnt-1",
+      "title": "Building Autonomous AI Agents with Python & Vision",
+      "caption": "A deep dive into constructing self-correcting perception loops for real-world automated camera systems.",
+      "platform": "YouTube",
+      "url": "https://youtube.com/@forge_auto",
+      "imageUrl": "/assets/project-ai.svg",
+      "category": "Tutorial",
+      "date": "May 2026",
+      "createdAt": "2026-05-01T12:00:00.000Z"
+    },
+    {
+      "id": "cnt-2",
+      "title": "Mastering After Effects Kinetic Typography & Cuts",
+      "caption": "How to design commercial-tier kinetic motion graphics and audio-synced video transitions.",
+      "platform": "YouTube",
+      "url": "https://youtube.com/@forge_auto",
+      "imageUrl": "/assets/project-video.svg",
+      "category": "Video Editing",
+      "date": "April 2026",
+      "createdAt": "2026-04-10T15:30:00.000Z"
+    },
+    {
+      "id": "cnt-3",
+      "title": "Clean Code & Architecture for Full-Stack Applications",
+      "caption": "Insights on maintaining modular React TypeScript codebases with zero bloat and smooth 60fps animations.",
+      "platform": "LinkedIn",
+      "url": "https://linkedin.com/in/manikantha",
+      "imageUrl": "/assets/project-web.svg",
+      "category": "Article",
+      "date": "March 2026",
+      "createdAt": "2026-03-20T10:00:00.000Z"
+    },
+    {
+      "id": "cnt-4",
+      "title": "Automating Daily Developer Workflows with Python Scripts",
+      "caption": "5 practical automation scripts that eliminate 10+ hours of tedious weekly developer tasks.",
+      "platform": "GitHub",
+      "url": "https://github.com/manikantha",
+      "imageUrl": "/assets/project-automation.svg",
+      "category": "Open Source",
+      "date": "February 2026",
+      "createdAt": "2026-02-14T08:00:00.000Z"
+    }
+  ],
+  "skills": [
+    {
+      "id": "sk-1",
+      "name": "Java",
+      "category": "Core Programming",
+      "level": "Advanced",
+      "iconName": "Code2"
+    },
+    {
+      "id": "sk-2",
+      "name": "Python",
+      "category": "Core Programming",
+      "level": "Expert",
+      "iconName": "FileCode"
+    },
+    {
+      "id": "sk-3",
+      "name": "C++",
+      "category": "Core Programming",
+      "level": "Proficient",
+      "iconName": "Cpu"
+    },
+    {
+      "id": "sk-4",
+      "name": "SQL",
+      "category": "Core Programming",
+      "level": "Advanced",
+      "iconName": "Database"
+    },
+    {
+      "id": "sk-5",
+      "name": "HTML",
+      "category": "Web & Frameworks",
+      "level": "Expert",
+      "iconName": "Globe"
+    },
+    {
+      "id": "sk-6",
+      "name": "CSS",
+      "category": "Web & Frameworks",
+      "level": "Expert",
+      "iconName": "Palette"
+    },
+    {
+      "id": "sk-7",
+      "name": "Web Development",
+      "category": "Web & Frameworks",
+      "level": "Expert",
+      "iconName": "Layers"
+    },
+    {
+      "id": "sk-8",
+      "name": "React & TypeScript",
+      "category": "Web & Frameworks",
+      "level": "Expert",
+      "iconName": "Code2"
+    },
+    {
+      "id": "sk-9",
+      "name": "AI/ML",
+      "category": "AI / ML & Data",
+      "level": "Advanced",
+      "iconName": "BrainCircuit"
+    },
+    {
+      "id": "sk-10",
+      "name": "Video Editing",
+      "category": "Creative & Automation",
+      "level": "Expert",
+      "iconName": "Video"
+    },
+    {
+      "id": "sk-11",
+      "name": "Content Creation",
+      "category": "Creative & Automation",
+      "level": "Advanced",
+      "iconName": "PenTool"
+    },
+    {
+      "id": "sk-12",
+      "name": "Automation",
+      "category": "Creative & Automation",
+      "level": "Expert",
+      "iconName": "Cog"
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp-1",
+      "organization": "Independent Freelancer & Digital Architect",
+      "role": "Full-Stack Web & AI Developer",
+      "duration": "2023 - Present",
+      "description": "Developing bespoke web platforms, AI/ML integrations, and custom workflow automations for international founders, agencies, and businesses.",
+      "certificateUrl": "",
+      "linkUrl": "https://manikantha.dev",
+      "order": 1
+    },
+    {
+      "id": "exp-2",
+      "organization": "MK forge_auto",
+      "role": "Founder & Technical Lead",
+      "duration": "2022 - Present",
+      "description": "Leading technical content creation, open-source automation utilities, and hands-on developer education spanning Python bots, AI integrations, and video editing.",
+      "certificateUrl": "",
+      "linkUrl": "https://youtube.com/@forge_auto",
+      "order": 2
+    },
+    {
+      "id": "exp-3",
+      "organization": "Digital Media & Tech Creatives",
+      "role": "Motion Designer & Video Editor",
+      "duration": "2021 - 2023",
+      "description": "Produced high-energy tech explainers, promotional showreels, and UI interaction animations with Adobe Premiere Pro, After Effects, and sound design.",
+      "certificateUrl": "",
+      "linkUrl": "",
+      "order": 3
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-1789798367300-t7kyv",
+      "name": "Tester",
+      "email": "test@example.com",
+      "message": "Hello Manikantha, exciting portfolio!",
+      "createdAt": "2026-09-19T06:12:47.300Z",
+      "read": false
+    }
+  ],
+  "services": [
+    {
+      "id": "srv-1",
+      "title": "AI / ML Solutions",
+      "category": "INTELLIGENCE & VISION",
+      "description": "Custom machine learning models, computer vision detection pipelines, predictive algorithms, and LLM-assisted workflow integrations.",
+      "iconName": "Brain",
+      "tags": [
+        "Python",
+        "PyTorch",
+        "OpenCV",
+        "FastAPI",
+        "Neural Vision"
+      ],
+      "link": "#contact",
+      "enabled": true,
+      "order": 1
+    },
+    {
+      "id": "srv-2",
+      "title": "Web Development",
+      "category": "FULL-STACK ARCHITECTURE",
+      "description": "High-performance, reactive full-stack web applications engineered with clean component architectures, robust APIs, and zero bloat.",
+      "iconName": "Code",
+      "tags": [
+        "React",
+        "TypeScript",
+        "Node.js",
+        "Tailwind CSS",
+        "Vite"
+      ],
+      "link": "#contact",
+      "enabled": true,
+      "order": 2
+    },
+    {
+      "id": "srv-3",
+      "title": "Web Design & UI/UX",
+      "category": "AESTHETICS & MOTION",
+      "description": "Futuristic, high-contrast digital interfaces paired with mathematical typographic scales, silky transitions, and responsive fluidity.",
+      "iconName": "Palette",
+      "tags": [
+        "Figma",
+        "UI/UX",
+        "Design Systems",
+        "Motion",
+        "Dark Theme"
+      ],
+      "link": "#contact",
+      "enabled": true,
+      "order": 3
+    },
+    {
+      "id": "srv-4",
+      "title": "Video Editing & Motion",
+      "category": "CINEMATIC STORYTELLING",
+      "description": "Commercial-tier video editing featuring kinetic typography, 3D title design, seamless pacing, dynamic audio synchronization, and color grading.",
+      "iconName": "Video",
+      "tags": [
+        "Premiere Pro",
+        "After Effects",
+        "DaVinci Resolve",
+        "Sound Design"
+      ],
+      "link": "#contact",
+      "enabled": true,
+      "order": 4
+    },
+    {
+      "id": "srv-5",
+      "title": "Content Creation",
+      "category": "TECHNICAL MEDIA",
+      "description": "Technical breakdowns, educational developer tutorials, and high-impact digital content engineered to explain complex concepts with clarity.",
+      "iconName": "PenTool",
+      "tags": [
+        "YouTube",
+        "Dev Tutorials",
+        "Documentation",
+        "Tech Reels"
+      ],
+      "link": "#contact",
+      "enabled": true,
+      "order": 5
+    },
+    {
+      "id": "srv-6",
+      "title": "Automation & Pipelines",
+      "category": "PRODUCTIVITY BOT SUITES",
+      "description": "Automated data collectors, webhook bridges, scheduled scrapers, and unattended background bots that save dozens of human hours each week.",
+      "iconName": "Cpu",
+      "tags": [
+        "Python Bots",
+        "CRON Pipelines",
+        "Webhooks",
+        "Cloud Tasks"
+      ],
+      "link": "#contact",
+      "enabled": true,
+      "order": 6
+    }
+  ],
+  "certifications": [
+    {
+      "id": "cert-1",
+      "name": "Machine Learning Specialization",
+      "organization": "DeepLearning.AI / Stanford Online",
+      "date": "2023",
+      "certificateId": "DLAI-ML-8921",
+      "certificateUrl": "https://coursera.org",
+      "imageUrl": "/assets/project-web.svg",
+      "enabled": true,
+      "order": 1
+    },
+    {
+      "id": "cert-2",
+      "name": "Professional Full-Stack Engineering",
+      "organization": "Meta",
+      "date": "2023",
+      "certificateId": "META-FS-4412",
+      "certificateUrl": "https://coursera.org",
+      "imageUrl": "/assets/project-web.svg",
+      "enabled": true,
+      "order": 2
+    },
+    {
+      "id": "cert-3",
+      "name": "Cloud Architecture & DevOps Pipelines",
+      "organization": "Google Cloud",
+      "date": "2024",
+      "certificateId": "GCP-ARCH-1099",
+      "certificateUrl": "https://cloud.google.com",
+      "imageUrl": "/assets/project-web.svg",
+      "enabled": true,
+      "order": 3
+    }
+  ],
+  "socialLinks": [
+    {
+      "id": "soc-1",
+      "platform": "GitHub",
+      "url": "https://github.com/manikantha",
+      "icon": "Github",
+      "enabled": true,
+      "order": 1
+    },
+    {
+      "id": "soc-2",
+      "platform": "LinkedIn",
+      "url": "https://linkedin.com/in/manikantha",
+      "icon": "Linkedin",
+      "enabled": true,
+      "order": 2
+    },
+    {
+      "id": "soc-3",
+      "platform": "Instagram",
+      "url": "https://instagram.com/manikantha",
+      "icon": "Instagram",
+      "enabled": true,
+      "order": 3
+    },
+    {
+      "id": "soc-4",
+      "platform": "YouTube",
+      "url": "https://youtube.com/@forge_auto",
+      "icon": "Youtube",
+      "enabled": true,
+      "order": 4
+    },
+    {
+      "id": "soc-5",
+      "platform": "Twitter / X",
+      "url": "https://twitter.com/manikantha",
+      "icon": "Twitter",
+      "enabled": true,
+      "order": 5
+    },
+    {
+      "id": "soc-6",
+      "platform": "WhatsApp",
+      "url": "https://wa.me/919999999999",
+      "icon": "MessageCircle",
+      "enabled": true,
+      "order": 6
+    },
+    {
+      "id": "soc-7",
+      "platform": "Email",
+      "url": "mailto:manimoram143@gmail.com",
+      "icon": "Mail",
+      "enabled": true,
+      "order": 7
+    }
+  ],
+  "heroConfig": {
+    "heading": "FREELANCER",
+    "subtitle": "AI/ML • WEB DESIGNER • CONTENT CREATOR",
+    "description": "Architecting intelligent algorithms, cinematic motion, and high-performance digital platforms with futuristic precision.",
+    "profileImage": "/uploads/test-char-1790156778912-713222.svg",
+    "primaryBtnText": "Hire Me",
+    "primaryBtnUrl": "#contact",
+    "secondaryBtnText": "Explore Portfolio",
+    "secondaryBtnUrl": "#work",
+    "badgeText": "HI, I'M MANI",
+    "visibility": {
+      "showHero": true,
+      "showBadge": true,
+      "showGreeting": true,
+      "showHeadline": true,
+      "showDescription": true,
+      "showButtons": true,
+      "showCharacter": true,
+      "showTechBadges": true
+    }
+  },
+  "aboutConfig": {
+    "heading": "Engineering Code & Visual Craft",
+    "subheading": "BRIDGING INTELLIGENCE, SYSTEMS & MEDIA",
+    "profileImage": "/assets/about-manikantha.svg",
+    "shortIntro": "Bridging Artificial Intelligence, Modern Web Systems & Cinematic Media",
+    "longDescription": [
+      "I am an enthusiastic AI/ML learner & developer, creative web designer, and digital content creator driven by the pursuit of futuristic technology and aesthetic precision.",
+      "My work bridges intelligent algorithms, high-performance web systems, and cinematic video storytelling to turn bold ideas into impactful reality.",
+      "Whether developing scalable web platforms, training predictive neural models, or automating repetitive business workflows, I focus on delivering seamless, human-centered experiences."
+    ],
+    "yearsExperience": "3+",
+    "projectsCompleted": "50+",
+    "certificationsCount": "12+",
+    "visibility": {
+      "showPhoto": true,
+      "showBadges": true,
+      "showStats": true,
+      "showCta": true
+    }
+  },
+  "contactConfig": {
+    "heading": "Initiate a Conversation",
+    "subheading": "HAVE A PROJECT OR AI PIPELINE IN MIND? REACH OUT ANYTIME.",
+    "email": "manimoram143@gmail.com",
+    "phone": "+91 99999 99999",
+    "whatsapp": "+91 99999 99999",
+    "location": "Hyderabad / Remote Worldwide",
+    "buttonText": "Transmit Inquiries",
+    "methodsEnabled": {
+      "email": true,
+      "phone": true,
+      "whatsapp": true,
+      "location": true,
+      "form": true
+    }
+  },
+  "appearance": {
+    "accentColor": "#FF7A00",
+    "secondaryAccentColor": "#00E5FF",
+    "borderRadius": "rounded-2xl",
+    "buttonStyle": "glow",
+    "globalAnimations": true,
+    "sectionVisibility": {
+      "home": true,
+      "about": true,
+      "services": true,
+      "skills": true,
+      "projects": true,
+      "experience": true,
+      "certifications": true,
+      "contact": true
+    }
+  },
+  "homeBackground": {
+    "enabled": true,
+    "autoMotion": {
+      "enabled": true,
+      "speed": 1,
+      "direction": "normal",
+      "intensity": 1,
+      "horizontal": true,
+      "vertical": true,
+      "loopSpeed": 1
+    },
+    "cursorInteraction": {
+      "enabled": true,
+      "sensitivity": 1,
+      "movementStrength": 1,
+      "horizontalInfluence": 1,
+      "verticalInfluence": 1
+    },
+    "motion3D": {
+      "enabled": true,
+      "perspective": 1300,
+      "depth": 1,
+      "tiltIntensity": 1,
+      "parallaxStrength": 1,
+      "layerSeparation": 1
+    },
+    "visual": {
+      "opacity": 0.4,
+      "brightness": 1,
+      "blur": 0,
+      "glowIntensity": 1,
+      "overlayDarkness": 0.7,
+      "particleIntensity": 1,
+      "lightIntensity": 1
+    },
+    "colors": {
+      "primaryGlow": "#FF7A00",
+      "secondaryGlow": "#00E5FF",
+      "accentColor": "#FF7A00"
+    },
+    "mobile": {
+      "enabled": true,
+      "reduceMotion": true,
+      "speed": 0.6,
+      "opacity": 0.35
+    },
+    "panels": [
+      {
+        "id": "p1",
+        "row": 1,
+        "tag": "MK FORGE",
+        "tagColor": "orange",
+        "title": "Autonomous Workflow Mesh",
+        "category": "Automation & Cloud",
+        "tech": "Python • Orchestration • FastQueue",
+        "iconName": "Settings",
+        "previewType": "nodes",
+        "stats": "LATENCY: 12ms"
+      },
+      {
+        "id": "p2",
+        "row": 1,
+        "tag": "WEB LABS",
+        "tagColor": "cyan",
+        "title": "Kinetic Web3 Dashboard",
+        "category": "Full-Stack Architecture",
+        "tech": "React 19 • TypeScript • Tailwind",
+        "iconName": "Code",
+        "previewType": "code",
+        "stats": "FPS: 120.0"
+      },
+      {
+        "id": "p3",
+        "row": 1,
+        "tag": "NEURAL AI",
+        "tagColor": "orange",
+        "title": "Tensor Vision Core",
+        "category": "Deep Learning / Vision",
+        "tech": "PyTorch • OpenCV • TensorRT",
+        "iconName": "Brain",
+        "previewType": "radar",
+        "stats": "CONFIDENCE: 99.4%"
+      },
+      {
+        "id": "p4",
+        "row": 1,
+        "tag": "STUDIO",
+        "tagColor": "purple",
+        "title": "Cinematic 4K Motion Grading",
+        "category": "Post-Production & Cuts",
+        "tech": "DaVinci • AfterEffects • GLSL",
+        "iconName": "Video",
+        "previewType": "timeline",
+        "stats": "RENDER: 4K 60fps"
+      },
+      {
+        "id": "p5",
+        "row": 2,
+        "tag": "SYSTEM",
+        "tagColor": "cyan",
+        "title": "MK Cluster Telemetry",
+        "category": "Distributed Systems",
+        "tech": "Docker • Edge Nodes • Microservices",
+        "iconName": "Cpu",
+        "previewType": "chart",
+        "stats": "THROUGHPUT: 18.4 GB/s"
+      },
+      {
+        "id": "p6",
+        "row": 2,
+        "tag": "AGENTIC",
+        "tagColor": "orange",
+        "title": "Autonomous Agent Dispatcher",
+        "category": "Generative AI Workflows",
+        "tech": "Gemini 2.5 • Multi-Agent • RAG",
+        "iconName": "Sparkles",
+        "previewType": "grid",
+        "stats": "AGENTS: 8 ACTIVE"
+      },
+      {
+        "id": "p7",
+        "row": 2,
+        "tag": "CREATIVE",
+        "tagColor": "cyan",
+        "title": "Holographic 3D Viewport",
+        "category": "WebGL Interactive",
+        "tech": "Three.js • Shader Code • GLTF",
+        "iconName": "Layers",
+        "previewType": "grid",
+        "stats": "DRAWCALLS: 24"
+      },
+      {
+        "id": "p8",
+        "row": 3,
+        "tag": "DATABASE",
+        "tagColor": "green",
+        "title": "Real-Time Event Stream Broker",
+        "category": "High-Concurrency Data",
+        "tech": "Kafka • WebSockets • Redis",
+        "iconName": "Database",
+        "previewType": "chart",
+        "stats": "EVENTS: 1.4M / sec"
+      },
+      {
+        "id": "p9",
+        "row": 3,
+        "tag": "MK FORGE",
+        "tagColor": "orange",
+        "title": "Cyber Security Perimeter",
+        "category": "Zero-Trust Protocol",
+        "tech": "JWT • AES-256 • Role RBAC",
+        "iconName": "Zap",
+        "previewType": "code",
+        "stats": "ENCRYPTION: HARDENED"
+      },
+      {
+        "id": "p10",
+        "row": 3,
+        "tag": "VISION AI",
+        "tagColor": "cyan",
+        "title": "Multi-Object Tracking Vector",
+        "category": "Computer Vision",
+        "tech": "YOLOv8 • CUDA • Stream Engine",
+        "iconName": "Eye",
+        "previewType": "radar",
+        "stats": "TRACKING: 98.7%"
+      }
+    ]
+  },
+  "mediaAssets": [
+    {
+      "id": "media-1790156778919-f3qjo",
+      "filename": "test-char-1790156778912-713222.svg",
+      "url": "/uploads/test-char-1790156778912-713222.svg",
+      "originalName": "test-char.svg",
+      "name": "test char",
+      "size": 7552,
+      "createdAt": "2026-09-23T09:46:18.919Z",
+      "usage": "home-character"
+    },
+    {
+      "id": "media-1789812130567-0od4a",
+      "filename": ".gitkeep",
+      "url": "/uploads/.gitkeep",
+      "name": ".gitkeep",
+      "originalName": ".gitkeep",
+      "size": 20,
+      "createdAt": "2026-09-19T06:07:17.117Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1789812130567-o1yrk",
+      "filename": "2navi-1789801295679-594023.png",
+      "url": "/uploads/2navi-1789801295679-594023.png",
+      "name": "2navi",
+      "originalName": "2navi-1789801295679-594023.png",
+      "size": 612828,
+      "createdAt": "2026-09-19T07:01:35.682Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1789812130567-8vyfl",
+      "filename": "2navi-1789801745457-154027.png",
+      "url": "/uploads/2navi-1789801745457-154027.png",
+      "name": "2navi",
+      "originalName": "2navi-1789801745457-154027.png",
+      "size": 612828,
+      "createdAt": "2026-09-19T07:09:05.458Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1789812130567-yknh0",
+      "filename": "2nd_image-1789799498231-454862.png",
+      "url": "/uploads/2nd_image-1789799498231-454862.png",
+      "name": "2nd image",
+      "originalName": "2nd_image-1789799498231-454862.png",
+      "size": 1342805,
+      "createdAt": "2026-09-19T06:31:38.232Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1789812130567-5e6sf",
+      "filename": "2nd_image-1789799568277-631355.png",
+      "url": "/uploads/2nd_image-1789799568277-631355.png",
+      "name": "2nd image",
+      "originalName": "2nd_image-1789799568277-631355.png",
+      "size": 1342805,
+      "createdAt": "2026-09-19T06:32:48.277Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1789812130567-2160b",
+      "filename": "2ndchar-1789799485376-834087.png",
+      "url": "/uploads/2ndchar-1789799485376-834087.png",
+      "name": "2ndchar",
+      "originalName": "2ndchar-1789799485376-834087.png",
+      "size": 2151311,
+      "createdAt": "2026-09-19T06:31:25.377Z",
+      "usage": "home-character"
+    },
+    {
+      "id": "media-1789812130567-w0l1x",
+      "filename": "Screenshot_2026-09-16_165801-1789799179870-593821.png",
+      "url": "/uploads/Screenshot_2026-09-16_165801-1789799179870-593821.png",
+      "name": "Screenshot 2026 09 16 165801",
+      "originalName": "Screenshot_2026-09-16_165801-1789799179870-593821.png",
+      "size": 6618,
+      "createdAt": "2026-09-19T06:26:19.872Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1789812130567-erlkc",
+      "filename": "brand-1789799196821-859178.png",
+      "url": "/uploads/brand-1789799196821-859178.png",
+      "name": "brand",
+      "originalName": "brand-1789799196821-859178.png",
+      "size": 983963,
+      "createdAt": "2026-09-19T06:26:36.822Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1789812130567-r4wsm",
+      "filename": "char_name-1789799229791-411179.png",
+      "url": "/uploads/char_name-1789799229791-411179.png",
+      "name": "char name",
+      "originalName": "char_name-1789799229791-411179.png",
+      "size": 2055553,
+      "createdAt": "2026-09-19T06:27:09.794Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1789812130567-1i4vn",
+      "filename": "image-1789799242815-729904.png",
+      "url": "/uploads/image-1789799242815-729904.png",
+      "name": "image",
+      "originalName": "image-1789799242815-729904.png",
+      "size": 2485682,
+      "createdAt": "2026-09-19T06:27:22.816Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1789812130567-rr948",
+      "filename": "image-1789799587607-159128.png",
+      "url": "/uploads/image-1789799587607-159128.png",
+      "name": "image",
+      "originalName": "image-1789799587607-159128.png",
+      "size": 2485682,
+      "createdAt": "2026-09-19T06:33:07.609Z",
+      "usage": "about"
+    },
+    {
+      "id": "media-1789812130567-qvmma",
+      "filename": "mk-forge-auto-1789801681560-817385.svg",
+      "url": "/uploads/mk-forge-auto-1789801681560-817385.svg",
+      "name": "mk forge auto",
+      "originalName": "mk-forge-auto-1789801681560-817385.svg",
+      "size": 1995,
+      "createdAt": "2026-09-19T07:08:01.563Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1789812130567-5tfgz",
+      "filename": "navigation-1789799213175-766347.png",
+      "url": "/uploads/navigation-1789799213175-766347.png",
+      "name": "navigation",
+      "originalName": "navigation-1789799213175-766347.png",
+      "size": 476488,
+      "createdAt": "2026-09-19T06:26:53.176Z",
+      "usage": "general"
+    }
+  ]
+}

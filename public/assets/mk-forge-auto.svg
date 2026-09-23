@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 220" width="100%" height="100%">
+  <defs>
+    <linearGradient id="mkBadgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFAE00" />
+      <stop offset="50%" stop-color="#FF7A00" />
+      <stop offset="100%" stop-color="#FF3C00" />
+    </linearGradient>
+    <filter id="badgeShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#FF7A00" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Left Icon Badge -->
+  <g transform="translate(10, 10)">
+    <rect x="0" y="0" width="200" height="200" rx="46" fill="url(#mkBadgeGrad)" filter="url(#badgeShadow)" />
+    
+    <!-- Swoosh Orbit -->
+    <path d="M 28 142 C 48 138, 92 110, 134 76 C 154 60, 168 51, 172 54 C 174 56, 170 63, 154 79 C 116 115, 70 142, 38 146 Z" fill="#0A0A0A" />
+    <!-- 4-point star -->
+    <path d="M 170 50 Q 170 42 172 35 Q 174 42 180 47 Q 174 50 172 57 Q 170 50 170 50 Z" fill="#0A0A0A" />
+
+    <!-- MK Monogram -->
+    <g fill="#0A0A0A">
+      <path d="M 36 78 L 54 78 L 54 140 L 36 140 Z" />
+      <path d="M 52 78 L 76 124 L 96 78 L 112 78 L 112 140 L 96 140 L 96 98 L 79 139 L 70 139 L 52 98 L 52 140 L 36 140 Z" />
+      <path d="M 112 78 L 130 78 L 130 140 L 112 140 Z" />
+      <path d="M 128 111 L 157 78 L 178 78 L 146 113 L 182 140 L 160 140 L 130 117 Z" />
+    </g>
+  </g>
+
+  <!-- Right Text Area -->
+  <g transform="translate(240, 0)">
+    <!-- "forge_auto" -->
+    <text x="0" y="128" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-weight="900" font-size="94" letter-spacing="-1">
+      <tspan fill="#FF7A00">forge</tspan><tspan fill="#FFFFFF">_auto</tspan>
+    </text>
+
+    <!-- Subtitle: "IDEAS | TECH | AUTOMATION" -->
+    <text x="6" y="174" font-family="'Space Grotesk', -apple-system, sans-serif" font-weight="600" font-size="21" fill="#B8B8B8" letter-spacing="9">
+      IDEAS  |  TECH  |  AUTOMATION
+    </text>
+  </g>
+</svg>

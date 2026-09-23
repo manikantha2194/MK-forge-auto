@@ -38,6 +38,7 @@ import {
 } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../utils/api';
 import {
   HomeBackgroundConfig,
   BackgroundPanelItem,
@@ -90,7 +91,7 @@ export const HomeBackgroundManager: React.FC = () => {
     if (!token) return;
     setLoadingMedia(true);
     try {
-      const res = await fetch('/api/media', {
+      const res = await apiFetch('/api/media', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {

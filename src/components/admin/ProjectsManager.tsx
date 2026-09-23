@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../utils/api';
 import { Project, ProjectCategory } from '../../types';
 import { MediaFallback } from '../MediaFallback';
 import { ConfirmDialog } from './ConfirmDialog';
@@ -144,7 +145,7 @@ export const ProjectsManager: React.FC = () => {
     formData.append('file', file);
 
     try {
-      const res = await fetch('/api/media/upload', {
+      const res = await apiFetch('/api/media/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -196,7 +197,7 @@ export const ProjectsManager: React.FC = () => {
       const url = editingId ? `/api/projects/${editingId}` : '/api/projects';
       const method = editingId ? 'PUT' : 'POST';
 
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -226,7 +227,7 @@ export const ProjectsManager: React.FC = () => {
   const handleToggleFeatured = async (project: Project) => {
     if (!isAdmin || !token) return;
     try {
-      const res = await fetch(`/api/projects/${project.id}`, {
+      const res = await apiFetch(`/api/projects/${project.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -261,7 +262,7 @@ export const ProjectsManager: React.FC = () => {
         featured: false,
       };
 
-      const res = await fetch('/api/projects', {
+      const res = await apiFetch('/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -289,7 +290,7 @@ export const ProjectsManager: React.FC = () => {
 
     setLoading(true);
     try {
-      const res = await fetch(`/api/projects/${deleteConfirmProject.id}`, {
+      const res = await apiFetch(`/api/projects/${deleteConfirmProject.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

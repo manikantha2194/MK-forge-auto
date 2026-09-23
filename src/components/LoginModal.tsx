@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Lock, Mail, Loader2, AlertCircle, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { apiFetch } from '../utils/api';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -23,21 +24,22 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
     setError(null);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await apiFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim(), password }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => null);
 
-      if (res.ok && data.token && data.user) {
+      if (res.ok && data?.token && data?.user) {
         login(data.token, data.user);
         onSuccess();
       } else {
-        setError(data.error || 'Authentication failed. Please verify credentials.');
+        setError(data?.error || `Authentication failed (${res.status}). Please verify credentials.`);
       }
-    } catch {
+    } catch (err) {
+      console.error('[LoginModal] Authentication request failed:', err);
       setError('Connection failure. Could not reach authentication server.');
     } finally {
       setLoading(false);

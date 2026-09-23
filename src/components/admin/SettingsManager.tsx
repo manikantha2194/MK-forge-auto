@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Save, Lock, CheckCircle, AlertCircle, Loader2, Download, Database, FileJson } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../utils/api';
 
 export const SettingsManager: React.FC = () => {
   const { profile, refreshProfile } = usePortfolio();
@@ -40,7 +41,7 @@ export const SettingsManager: React.FC = () => {
     setProfileMsg(null);
 
     try {
-      const res = await fetch('/api/profile', {
+      const res = await apiFetch('/api/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +94,7 @@ export const SettingsManager: React.FC = () => {
     setPasswordMsg(null);
 
     try {
-      const res = await fetch('/api/auth/change-password', {
+      const res = await apiFetch('/api/auth/change-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -418,7 +419,7 @@ export const SettingsManager: React.FC = () => {
             type="button"
             onClick={async () => {
               try {
-                const res = await fetch('/api/cms/all', {
+                const res = await apiFetch('/api/cms/all', {
                   headers: { Authorization: `Bearer ${token}` },
                 });
                 const data = await res.json();

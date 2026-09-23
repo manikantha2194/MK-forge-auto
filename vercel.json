@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://ais-dev-pckpcvo3je4jpqrb53lcee-624129667025.asia-southeast1.run.app/api/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://ais-dev-pckpcvo3je4jpqrb53lcee-624129667025.asia-southeast1.run.app/uploads/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

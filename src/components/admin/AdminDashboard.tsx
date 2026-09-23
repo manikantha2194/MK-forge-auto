@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { usePortfolio } from '../../context/PortfolioContext';
+import { apiFetch } from '../../utils/api';
 import { AdminOverview } from './AdminOverview';
 import { MediaManager } from './MediaManager';
 import { ProjectsManager } from './ProjectsManager';
@@ -96,22 +97,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     setLoginError(null);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await apiFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: loginEmail.trim(), password: loginPassword }),
       });
 
-      const data = await res.json();
-      if (res.ok && data.token && data.user) {
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.token && data?.user) {
         login(data.token, data.user);
         if (data.user.role !== 'admin') {
           setLoginError('This account is authenticated, but does not have administrator privileges.');
         }
       } else {
-        setLoginError(data.error || 'Invalid credentials.');
+        setLoginError(data?.error || `Authentication failed (${res.status}). Invalid credentials.`);
       }
-    } catch {
+    } catch (err) {
+      console.error('[AdminDashboard] Authentication request failed:', err);
       setLoginError('Failed to communicate with authentication server.');
     } finally {
       setLoginLoading(false);

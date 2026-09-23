@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../utils/api';
 import { MediaFallback } from '../MediaFallback';
 import { AboutEditorConfig, MediaAssetItem } from '../../types';
 
@@ -40,7 +41,7 @@ export const AboutManager: React.FC = () => {
     formData.append('usage', 'about');
 
     try {
-      const res = await fetch('/api/media/upload', {
+      const res = await apiFetch('/api/media/upload', {
         method: 'POST',
         headers: activeToken ? { Authorization: `Bearer ${activeToken}` } : {},
         body: formData,
@@ -59,7 +60,7 @@ export const AboutManager: React.FC = () => {
   const openMediaPicker = async () => {
     const activeToken = token || localStorage.getItem('mk_auth_token');
     try {
-      const res = await fetch('/api/media', {
+      const res = await apiFetch('/api/media', {
         headers: activeToken ? { Authorization: `Bearer ${activeToken}` } : {},
       });
       if (res.ok) {

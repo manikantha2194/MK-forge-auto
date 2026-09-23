@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Trash2, CheckCircle2, AlertCircle, Clock, Check } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../utils/api';
 import { ContactMessage } from '../../types';
 
 export const MessagesManager: React.FC = () => {
@@ -10,7 +11,7 @@ export const MessagesManager: React.FC = () => {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch('/api/contact', {
+      const res = await apiFetch('/api/contact', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -29,7 +30,7 @@ export const MessagesManager: React.FC = () => {
 
   const markRead = async (id: string) => {
     try {
-      const res = await fetch(`/api/contact/${id}/read`, {
+      const res = await apiFetch(`/api/contact/${id}/read`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -46,7 +47,7 @@ export const MessagesManager: React.FC = () => {
   const deleteMsg = async (id: string) => {
     if (!window.confirm('Delete message?')) return;
     try {
-      const res = await fetch(`/api/contact/${id}`, {
+      const res = await apiFetch(`/api/contact/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

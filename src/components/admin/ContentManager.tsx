@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Edit2, Trash2, ExternalLink, CheckCircle, AlertCircle } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../utils/api';
 import { ContentItem, PlatformType } from '../../types';
 import { MediaFallback } from '../MediaFallback';
 import { ConfirmDialog } from './ConfirmDialog';
@@ -75,7 +76,7 @@ export const ContentManager: React.FC = () => {
       const url = editingId ? `/api/content/${editingId}` : '/api/content';
       const method = editingId ? 'PUT' : 'POST';
 
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +107,7 @@ export const ContentManager: React.FC = () => {
     if (!deleteConfirmItem || !token) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/content/${deleteConfirmItem.id}`, {
+      const res = await apiFetch(`/api/content/${deleteConfirmItem.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

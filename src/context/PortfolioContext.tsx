@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { apiFetch } from '../utils/api';
 import {
   ProfileConfig,
   StatItem,
@@ -97,7 +98,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchProfile = useCallback(async () => {
     try {
-      const res = await fetch('/api/profile');
+      const res = await apiFetch('/api/profile');
       if (res.ok) setProfile(await res.json());
     } catch (e) {
       console.error('Failed to fetch profile', e);
@@ -106,7 +107,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchStats = useCallback(async () => {
     try {
-      const res = await fetch('/api/stats');
+      const res = await apiFetch('/api/stats');
       if (res.ok) setStats(await res.json());
     } catch (e) {
       console.error('Failed to fetch stats', e);
@@ -115,7 +116,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchProjects = useCallback(async () => {
     try {
-      const res = await fetch('/api/projects');
+      const res = await apiFetch('/api/projects');
       if (res.ok) setProjects(await res.json());
     } catch (e) {
       console.error('Failed to fetch projects', e);
@@ -124,7 +125,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchContent = useCallback(async () => {
     try {
-      const res = await fetch('/api/content');
+      const res = await apiFetch('/api/content');
       if (res.ok) setContent(await res.json());
     } catch (e) {
       console.error('Failed to fetch content', e);
@@ -133,7 +134,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchSkills = useCallback(async () => {
     try {
-      const res = await fetch('/api/skills');
+      const res = await apiFetch('/api/skills');
       if (res.ok) setSkills(await res.json());
     } catch (e) {
       console.error('Failed to fetch skills', e);
@@ -142,7 +143,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchExperience = useCallback(async () => {
     try {
-      const res = await fetch('/api/experience');
+      const res = await apiFetch('/api/experience');
       if (res.ok) setExperience(await res.json());
     } catch (e) {
       console.error('Failed to fetch experience', e);
@@ -151,7 +152,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchServices = useCallback(async () => {
     try {
-      const res = await fetch('/api/services');
+      const res = await apiFetch('/api/services');
       if (res.ok) setServices(await res.json());
     } catch (e) {
       console.error('Failed to fetch services', e);
@@ -160,7 +161,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchCertifications = useCallback(async () => {
     try {
-      const res = await fetch('/api/certifications');
+      const res = await apiFetch('/api/certifications');
       if (res.ok) setCertifications(await res.json());
     } catch (e) {
       console.error('Failed to fetch certifications', e);
@@ -169,7 +170,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchSocialLinks = useCallback(async () => {
     try {
-      const res = await fetch('/api/social-links');
+      const res = await apiFetch('/api/social-links');
       if (res.ok) setSocialLinks(await res.json());
     } catch (e) {
       console.error('Failed to fetch social links', e);
@@ -178,7 +179,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchHeroConfig = useCallback(async () => {
     try {
-      const res = await fetch('/api/hero-config');
+      const res = await apiFetch('/api/hero-config');
       if (res.ok) setHeroConfig(await res.json());
     } catch (e) {
       console.error('Failed to fetch hero config', e);
@@ -187,7 +188,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchAboutConfig = useCallback(async () => {
     try {
-      const res = await fetch('/api/about-config');
+      const res = await apiFetch('/api/about-config');
       if (res.ok) setAboutConfig(await res.json());
     } catch (e) {
       console.error('Failed to fetch about config', e);
@@ -196,7 +197,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchContactConfig = useCallback(async () => {
     try {
-      const res = await fetch('/api/contact-config');
+      const res = await apiFetch('/api/contact-config');
       if (res.ok) setContactConfig(await res.json());
     } catch (e) {
       console.error('Failed to fetch contact config', e);
@@ -205,7 +206,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchAppearance = useCallback(async () => {
     try {
-      const res = await fetch('/api/appearance');
+      const res = await apiFetch('/api/appearance');
       if (res.ok) setAppearance(await res.json());
     } catch (e) {
       console.error('Failed to fetch appearance', e);
@@ -214,7 +215,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const fetchHomeBackground = useCallback(async () => {
     try {
-      const res = await fetch('/api/home-background');
+      const res = await apiFetch('/api/home-background');
       if (res.ok) setHomeBackground(await res.json());
     } catch (e) {
       console.error('Failed to fetch home background', e);
@@ -273,7 +274,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const updateHeroConfig = async (updates: Partial<HeroEditorConfig>): Promise<boolean> => {
     try {
-      const res = await fetch('/api/hero-config', {
+      const res = await apiFetch('/api/hero-config', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updates),
@@ -292,7 +293,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const updateAboutConfig = async (updates: Partial<AboutEditorConfig>): Promise<boolean> => {
     try {
-      const res = await fetch('/api/about-config', {
+      const res = await apiFetch('/api/about-config', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updates),
@@ -311,7 +312,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const updateProfile = async (updates: Partial<ProfileConfig>): Promise<boolean> => {
     try {
-      const res = await fetch('/api/profile', {
+      const res = await apiFetch('/api/profile', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updates),
@@ -331,7 +332,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const updateContactConfig = async (updates: Partial<ContactEditorConfig>): Promise<boolean> => {
     try {
-      const res = await fetch('/api/contact-config', {
+      const res = await apiFetch('/api/contact-config', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updates),
@@ -350,7 +351,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const updateAppearance = async (updates: Partial<AppearanceConfig>): Promise<boolean> => {
     try {
-      const res = await fetch('/api/appearance', {
+      const res = await apiFetch('/api/appearance', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updates),
@@ -368,7 +369,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const updateHomeBackground = async (updates: Partial<HomeBackgroundConfig>): Promise<boolean> => {
     try {
-      const res = await fetch('/api/home-background', {
+      const res = await apiFetch('/api/home-background', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updates),
@@ -386,7 +387,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const resetHomeBackground = async (): Promise<boolean> => {
     try {
-      const res = await fetch('/api/home-background/reset', {
+      const res = await apiFetch('/api/home-background/reset', {
         method: 'POST',
         headers: getAuthHeaders(),
       });
@@ -403,7 +404,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const duplicateProject = async (id: string): Promise<Project | null> => {
     try {
-      const res = await fetch(`/api/projects/${id}/duplicate`, {
+      const res = await apiFetch(`/api/projects/${id}/duplicate`, {
         method: 'POST',
         headers: getAuthHeaders(),
       });
@@ -420,7 +421,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const reorderProjects = async (ids: string[]): Promise<boolean> => {
     try {
-      const res = await fetch('/api/projects/reorder', {
+      const res = await apiFetch('/api/projects/reorder', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ ids }),
@@ -438,7 +439,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const reorderSkills = async (ids: string[]): Promise<boolean> => {
     try {
-      const res = await fetch('/api/skills/reorder', {
+      const res = await apiFetch('/api/skills/reorder', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ ids }),
@@ -456,7 +457,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const reorderExperience = async (ids: string[]): Promise<boolean> => {
     try {
-      const res = await fetch('/api/experience/reorder', {
+      const res = await apiFetch('/api/experience/reorder', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ ids }),
@@ -474,7 +475,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const reorderServices = async (ids: string[]): Promise<boolean> => {
     try {
-      const res = await fetch('/api/services-reorder', {
+      const res = await apiFetch('/api/services-reorder', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ ids }),
@@ -492,7 +493,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const reorderCertifications = async (ids: string[]): Promise<boolean> => {
     try {
-      const res = await fetch('/api/certifications-reorder', {
+      const res = await apiFetch('/api/certifications-reorder', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ ids }),
@@ -510,7 +511,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const addService = async (service: ServiceItem): Promise<boolean> => {
     try {
-      const res = await fetch('/api/services', {
+      const res = await apiFetch('/api/services', {
         method: 'POST',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(service),
@@ -527,7 +528,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const updateService = async (id: string, updates: Partial<ServiceItem>): Promise<boolean> => {
     try {
-      const res = await fetch(`/api/services/${id}`, {
+      const res = await apiFetch(`/api/services/${id}`, {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updates),
@@ -544,7 +545,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const deleteService = async (id: string): Promise<boolean> => {
     try {
-      const res = await fetch(`/api/services/${id}`, {
+      const res = await apiFetch(`/api/services/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
       });
@@ -560,7 +561,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const addCertification = async (cert: CertificationItem): Promise<boolean> => {
     try {
-      const res = await fetch('/api/certifications', {
+      const res = await apiFetch('/api/certifications', {
         method: 'POST',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(cert),
@@ -577,7 +578,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const updateCertification = async (id: string, updates: Partial<CertificationItem>): Promise<boolean> => {
     try {
-      const res = await fetch(`/api/certifications/${id}`, {
+      const res = await apiFetch(`/api/certifications/${id}`, {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updates),
@@ -594,7 +595,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const deleteCertification = async (id: string): Promise<boolean> => {
     try {
-      const res = await fetch(`/api/certifications/${id}`, {
+      const res = await apiFetch(`/api/certifications/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
       });
@@ -610,7 +611,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const addSocialLink = async (link: SocialLinkItem): Promise<boolean> => {
     try {
-      const res = await fetch('/api/social-links', {
+      const res = await apiFetch('/api/social-links', {
         method: 'POST',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(link),
@@ -627,7 +628,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const updateSocialLink = async (id: string, updates: Partial<SocialLinkItem>): Promise<boolean> => {
     try {
-      const res = await fetch(`/api/social-links/${id}`, {
+      const res = await apiFetch(`/api/social-links/${id}`, {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updates),
@@ -644,7 +645,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const deleteSocialLink = async (id: string): Promise<boolean> => {
     try {
-      const res = await fetch(`/api/social-links/${id}`, {
+      const res = await apiFetch(`/api/social-links/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
       });
@@ -660,7 +661,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const reorderSocialLinks = async (ids: string[]): Promise<boolean> => {
     try {
-      const res = await fetch('/api/social-links-reorder', {
+      const res = await apiFetch('/api/social-links-reorder', {
         method: 'PUT',
         headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ ids }),

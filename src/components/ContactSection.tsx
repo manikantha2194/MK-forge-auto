@@ -14,6 +14,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
+import { apiFetch } from '../utils/api';
 
 export const ContactSection: React.FC = () => {
   const { profile } = usePortfolio();
@@ -45,7 +46,7 @@ export const ContactSection: React.FC = () => {
     setStatusMessage('');
 
     try {
-      const res = await fetch('/api/contact', {
+      const res = await apiFetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

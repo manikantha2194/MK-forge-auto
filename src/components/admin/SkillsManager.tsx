@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Edit2, Trash2, CheckCircle, AlertCircle } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../utils/api';
 import { Skill } from '../../types';
 import { ConfirmDialog } from './ConfirmDialog';
 
@@ -67,7 +68,7 @@ export const SkillsManager: React.FC = () => {
       const url = editingId ? `/api/skills/${editingId}` : '/api/skills';
       const method = editingId ? 'PUT' : 'POST';
 
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +95,7 @@ export const SkillsManager: React.FC = () => {
     if (!deleteConfirmSkill || !token) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/skills/${deleteConfirmSkill.id}`, {
+      const res = await apiFetch(`/api/skills/${deleteConfirmSkill.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

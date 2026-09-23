@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ImageOff } from 'lucide-react';
+import { resolveMediaUrl } from '../utils/api';
 
 interface MediaFallbackProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackText?: string;
@@ -15,11 +16,11 @@ export const MediaFallback: React.FC<MediaFallbackProps> = ({
   className = '',
   ...props
 }) => {
-  const [currentSrc, setCurrentSrc] = useState(src);
+  const [currentSrc, setCurrentSrc] = useState<string | undefined>(resolveMediaUrl(src));
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    setCurrentSrc(src);
+    setCurrentSrc(resolveMediaUrl(src));
     setHasError(false);
   }, [src]);
 

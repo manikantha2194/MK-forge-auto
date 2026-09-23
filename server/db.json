@@ -43,10 +43,10 @@
       "email": "manimoram143@gmail.com"
     },
     "media": {
-      "heroCharacter": "/uploads/test-char-1790156778912-713222.svg",
-      "aboutPhoto": "/assets/about-manikantha.svg",
-      "brandIcon": "/assets/mk-logo.svg",
-      "brandBanner": "/assets/mk-forge-auto.svg"
+      "heroCharacter": "/uploads/2ndchar-1790171696664-685693.png",
+      "aboutPhoto": "/uploads/2nd_image-1790171704860-374338.png",
+      "brandIcon": "/uploads/brand-1790171714330-69805.png",
+      "brandBanner": "/uploads/2navi-1790171721602-378334.png"
     }
   },
   "stats": [
@@ -364,7 +364,7 @@
       "email": "test@example.com",
       "message": "Hello Manikantha, exciting portfolio!",
       "createdAt": "2026-09-19T06:12:47.300Z",
-      "read": false
+      "read": true
     }
   ],
   "services": [
@@ -559,13 +559,21 @@
       "icon": "Mail",
       "enabled": true,
       "order": 7
+    },
+    {
+      "platform": "YouTube",
+      "url": "https://www.youtube.com/@ManikantaMoram",
+      "icon": "Youtube",
+      "enabled": true,
+      "order": 8,
+      "id": "soc-1790172145597-dv7f8"
     }
   ],
   "heroConfig": {
     "heading": "FREELANCER",
     "subtitle": "AI/ML • WEB DESIGNER • CONTENT CREATOR",
     "description": "Architecting intelligent algorithms, cinematic motion, and high-performance digital platforms with futuristic precision.",
-    "profileImage": "/uploads/test-char-1790156778912-713222.svg",
+    "profileImage": "/uploads/2ndchar-1790171696664-685693.png",
     "primaryBtnText": "Hire Me",
     "primaryBtnUrl": "#contact",
     "secondaryBtnText": "Explore Portfolio",
@@ -585,7 +593,7 @@
   "aboutConfig": {
     "heading": "Engineering Code & Visual Craft",
     "subheading": "BRIDGING INTELLIGENCE, SYSTEMS & MEDIA",
-    "profileImage": "/assets/about-manikantha.svg",
+    "profileImage": "/uploads/2nd_image-1790171704860-374338.png",
     "shortIntro": "Bridging Artificial Intelligence, Modern Web Systems & Cinematic Media",
     "longDescription": [
       "I am an enthusiastic AI/ML learner & developer, creative web designer, and digital content creator driven by the pursuit of futuristic technology and aesthetic precision.",
@@ -806,6 +814,46 @@
   },
   "mediaAssets": [
     {
+      "id": "media-1790171721605-p08i4",
+      "filename": "2navi-1790171721602-378334.png",
+      "url": "/uploads/2navi-1790171721602-378334.png",
+      "originalName": "2navi.png",
+      "name": "2navi",
+      "size": 612828,
+      "createdAt": "2026-09-23T13:55:21.605Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1790171714339-r6u7o",
+      "filename": "brand-1790171714330-69805.png",
+      "url": "/uploads/brand-1790171714330-69805.png",
+      "originalName": "brand.png",
+      "name": "brand",
+      "size": 983963,
+      "createdAt": "2026-09-23T13:55:14.339Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1790171704869-p5f47",
+      "filename": "2nd_image-1790171704860-374338.png",
+      "url": "/uploads/2nd_image-1790171704860-374338.png",
+      "originalName": "2nd image.png",
+      "name": "2nd image",
+      "size": 1342805,
+      "createdAt": "2026-09-23T13:55:04.869Z",
+      "usage": "about"
+    },
+    {
+      "id": "media-1790171696683-9xx43",
+      "filename": "2ndchar-1790171696664-685693.png",
+      "url": "/uploads/2ndchar-1790171696664-685693.png",
+      "originalName": "2ndchar.png",
+      "name": "2ndchar",
+      "size": 2151311,
+      "createdAt": "2026-09-23T13:54:56.684Z",
+      "usage": "home-character"
+    },
+    {
       "id": "media-1790156778919-f3qjo",
       "filename": "test-char-1790156778912-713222.svg",
       "url": "/uploads/test-char-1790156778912-713222.svg",
@@ -823,126 +871,6 @@
       "originalName": ".gitkeep",
       "size": 20,
       "createdAt": "2026-09-19T06:07:17.117Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1789812130567-o1yrk",
-      "filename": "2navi-1789801295679-594023.png",
-      "url": "/uploads/2navi-1789801295679-594023.png",
-      "name": "2navi",
-      "originalName": "2navi-1789801295679-594023.png",
-      "size": 612828,
-      "createdAt": "2026-09-19T07:01:35.682Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1789812130567-8vyfl",
-      "filename": "2navi-1789801745457-154027.png",
-      "url": "/uploads/2navi-1789801745457-154027.png",
-      "name": "2navi",
-      "originalName": "2navi-1789801745457-154027.png",
-      "size": 612828,
-      "createdAt": "2026-09-19T07:09:05.458Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1789812130567-yknh0",
-      "filename": "2nd_image-1789799498231-454862.png",
-      "url": "/uploads/2nd_image-1789799498231-454862.png",
-      "name": "2nd image",
-      "originalName": "2nd_image-1789799498231-454862.png",
-      "size": 1342805,
-      "createdAt": "2026-09-19T06:31:38.232Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1789812130567-5e6sf",
-      "filename": "2nd_image-1789799568277-631355.png",
-      "url": "/uploads/2nd_image-1789799568277-631355.png",
-      "name": "2nd image",
-      "originalName": "2nd_image-1789799568277-631355.png",
-      "size": 1342805,
-      "createdAt": "2026-09-19T06:32:48.277Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1789812130567-2160b",
-      "filename": "2ndchar-1789799485376-834087.png",
-      "url": "/uploads/2ndchar-1789799485376-834087.png",
-      "name": "2ndchar",
-      "originalName": "2ndchar-1789799485376-834087.png",
-      "size": 2151311,
-      "createdAt": "2026-09-19T06:31:25.377Z",
-      "usage": "home-character"
-    },
-    {
-      "id": "media-1789812130567-w0l1x",
-      "filename": "Screenshot_2026-09-16_165801-1789799179870-593821.png",
-      "url": "/uploads/Screenshot_2026-09-16_165801-1789799179870-593821.png",
-      "name": "Screenshot 2026 09 16 165801",
-      "originalName": "Screenshot_2026-09-16_165801-1789799179870-593821.png",
-      "size": 6618,
-      "createdAt": "2026-09-19T06:26:19.872Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1789812130567-erlkc",
-      "filename": "brand-1789799196821-859178.png",
-      "url": "/uploads/brand-1789799196821-859178.png",
-      "name": "brand",
-      "originalName": "brand-1789799196821-859178.png",
-      "size": 983963,
-      "createdAt": "2026-09-19T06:26:36.822Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1789812130567-r4wsm",
-      "filename": "char_name-1789799229791-411179.png",
-      "url": "/uploads/char_name-1789799229791-411179.png",
-      "name": "char name",
-      "originalName": "char_name-1789799229791-411179.png",
-      "size": 2055553,
-      "createdAt": "2026-09-19T06:27:09.794Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1789812130567-1i4vn",
-      "filename": "image-1789799242815-729904.png",
-      "url": "/uploads/image-1789799242815-729904.png",
-      "name": "image",
-      "originalName": "image-1789799242815-729904.png",
-      "size": 2485682,
-      "createdAt": "2026-09-19T06:27:22.816Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1789812130567-rr948",
-      "filename": "image-1789799587607-159128.png",
-      "url": "/uploads/image-1789799587607-159128.png",
-      "name": "image",
-      "originalName": "image-1789799587607-159128.png",
-      "size": 2485682,
-      "createdAt": "2026-09-19T06:33:07.609Z",
-      "usage": "about"
-    },
-    {
-      "id": "media-1789812130567-qvmma",
-      "filename": "mk-forge-auto-1789801681560-817385.svg",
-      "url": "/uploads/mk-forge-auto-1789801681560-817385.svg",
-      "name": "mk forge auto",
-      "originalName": "mk-forge-auto-1789801681560-817385.svg",
-      "size": 1995,
-      "createdAt": "2026-09-19T07:08:01.563Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1789812130567-5tfgz",
-      "filename": "navigation-1789799213175-766347.png",
-      "url": "/uploads/navigation-1789799213175-766347.png",
-      "name": "navigation",
-      "originalName": "navigation-1789799213175-766347.png",
-      "size": 476488,
-      "createdAt": "2026-09-19T06:26:53.176Z",
       "usage": "general"
     }
   ]

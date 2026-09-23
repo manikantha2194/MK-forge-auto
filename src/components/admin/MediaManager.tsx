@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../utils/api';
 import { MediaFallback } from '../MediaFallback';
 import { InteractiveHeroBackground } from '../InteractiveHeroBackground';
 import {
@@ -143,7 +144,7 @@ export const MediaManager: React.FC = () => {
     if (!token) return;
     setLoadingMedia(true);
     try {
-      const res = await fetch('/api/media', {
+      const res = await apiFetch('/api/media', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -242,7 +243,7 @@ export const MediaManager: React.FC = () => {
     formData.append('usage', preferredUsage);
 
     try {
-      const res = await fetch('/api/media/upload', {
+      const res = await apiFetch('/api/media/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -272,7 +273,7 @@ export const MediaManager: React.FC = () => {
   const handleUpdateUsage = async (asset: MediaAssetItem, newUsage: MediaUsage) => {
     const activeToken = token || localStorage.getItem('mk_auth_token');
     try {
-      const res = await fetch(`/api/media/${encodeURIComponent(asset.filename)}`, {
+      const res = await apiFetch(`/api/media/${encodeURIComponent(asset.filename)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -434,7 +435,7 @@ export const MediaManager: React.FC = () => {
     }
 
     try {
-      const res = await fetch(`/api/media/${encodeURIComponent(asset.filename)}`, {
+      const res = await apiFetch(`/api/media/${encodeURIComponent(asset.filename)}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -497,7 +498,7 @@ export const MediaManager: React.FC = () => {
   const handleAssignToBrandSlot = async (slotKey: string, url: string, slotTitle: string) => {
     const activeToken = token || localStorage.getItem('mk_auth_token');
     try {
-      const updateRes = await fetch('/api/profile', {
+      const updateRes = await apiFetch('/api/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -517,7 +518,7 @@ export const MediaManager: React.FC = () => {
 
       // Also ensure slot-specific configs are updated if relevant
       if (slotKey === 'heroCharacter') {
-        await fetch('/api/hero-config', {
+        await apiFetch('/api/hero-config', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -526,7 +527,7 @@ export const MediaManager: React.FC = () => {
           body: JSON.stringify({ profileImage: url }),
         });
       } else if (slotKey === 'aboutPhoto') {
-        await fetch('/api/about-config', {
+        await apiFetch('/api/about-config', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -557,7 +558,7 @@ export const MediaManager: React.FC = () => {
     formData.append('usage', slotKey === 'heroCharacter' ? 'home-character' : slotKey === 'aboutPhoto' ? 'about' : 'general');
 
     try {
-      const uploadRes = await fetch('/api/media/upload', {
+      const uploadRes = await apiFetch('/api/media/upload', {
         method: 'POST',
         headers: activeToken ? { Authorization: `Bearer ${activeToken}` } : {},
         body: formData,
@@ -567,7 +568,7 @@ export const MediaManager: React.FC = () => {
         throw new Error(uploadData.error || 'Upload failed');
       }
 
-      const updateRes = await fetch('/api/profile', {
+      const updateRes = await apiFetch('/api/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -587,7 +588,7 @@ export const MediaManager: React.FC = () => {
 
       // Also ensure slot-specific configs are updated if relevant
       if (slotKey === 'heroCharacter') {
-        await fetch('/api/hero-config', {
+        await apiFetch('/api/hero-config', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -596,7 +597,7 @@ export const MediaManager: React.FC = () => {
           body: JSON.stringify({ profileImage: uploadData.fileUrl }),
         });
       } else if (slotKey === 'aboutPhoto') {
-        await fetch('/api/about-config', {
+        await apiFetch('/api/about-config', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -626,7 +627,7 @@ export const MediaManager: React.FC = () => {
     const activeToken = token || localStorage.getItem('mk_auth_token');
     setIsResetting(true);
     try {
-      const res = await fetch('/api/profile', {
+      const res = await apiFetch('/api/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -646,7 +647,7 @@ export const MediaManager: React.FC = () => {
 
       // Also ensure slot-specific configs are updated if relevant
       if (slot.key === 'heroCharacter') {
-        await fetch('/api/hero-config', {
+        await apiFetch('/api/hero-config', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -655,7 +656,7 @@ export const MediaManager: React.FC = () => {
           body: JSON.stringify({ profileImage: slot.defaultUrl }),
         });
       } else if (slot.key === 'aboutPhoto') {
-        await fetch('/api/about-config', {
+        await apiFetch('/api/about-config', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

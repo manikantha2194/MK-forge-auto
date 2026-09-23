@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Edit2, Trash2, CheckCircle, AlertCircle } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../utils/api';
 import { ExperienceItem } from '../../types';
 import { ConfirmDialog } from './ConfirmDialog';
 
@@ -72,7 +73,7 @@ export const ExperienceManager: React.FC = () => {
       const url = editingId ? `/api/experience/${editingId}` : '/api/experience';
       const method = editingId ? 'PUT' : 'POST';
 
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +100,7 @@ export const ExperienceManager: React.FC = () => {
     if (!deleteConfirmExp || !token) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/experience/${deleteConfirmExp.id}`, {
+      const res = await apiFetch(`/api/experience/${deleteConfirmExp.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

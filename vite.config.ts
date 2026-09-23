@@ -4,8 +4,16 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
+  const deployedAppUrl =
+    process.env.VITE_APP_URL ||
+    process.env.APP_URL ||
+    'https://ais-dev-pckpcvo3je4jpqrb53lcee-624129667025.asia-southeast1.run.app';
+
   return {
     plugins: [react(), tailwindcss()],
+    define: {
+      'import.meta.env.VITE_APP_URL': JSON.stringify(deployedAppUrl),
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

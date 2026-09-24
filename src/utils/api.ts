@@ -2,61 +2,38 @@
  * API configuration and utility functions for communicating with
  * the backend authentication and portfolio management server.
  *
- * Supports both:
- * 1. Single-origin Vercel deployment (where Express runs as a Vercel Serverless function at /api/*).
- * 2. External dedicated backend service (if VITE_APP_URL is explicitly set to an external host).
+ * Defaults to same-origin relative URLs ("") for standard Vercel
+ * serverless deployment (/api/*).
  */
 
-const rawAppUrl = (import.meta.env.VITE_APP_URL as string | undefined)?.trim() || '';
-
-// Clean the configured backend URL
-function sanitizeBackendUrl(url: string): string {
-  if (!url) return '';
-  const cleaned = url.replace(/\/+$/, '');
-  // Ignore localhost and placeholder URLs when determining an external production backend
-  if (
-    cleaned.includes('example.com') ||
-    cleaned.includes('localhost') ||
-    cleaned.includes('127.0.0.1')
-  ) {
-    return '';
-  }
-  return cleaned;
-}
-
-export const CONFIGURED_BACKEND_URL: string = sanitizeBackendUrl(rawAppUrl);
+export const API_BASE_URL: string = '';
 
 /**
  * Returns the base URL for API calls.
- * If VITE_APP_URL is explicitly configured with an external backend host (e.g. Render, Railway, AWS),
- * this returns that backend URL.
- * Otherwise (default for Vercel unified deployments, preview environments, and local dev),
- * returns empty string for same-origin relative API paths.
+ * Always returns "" to enforce same-origin relative API requests.
  */
 export function getApiBaseUrl(): string {
-  if (CONFIGURED_BACKEND_URL) {
-    if (typeof window !== 'undefined') {
-      const currentOrigin = window.location.origin;
-      // Only prepend if backend is on a different origin than current window
-      if (CONFIGURED_BACKEND_URL !== currentOrigin) {
-        return CONFIGURED_BACKEND_URL;
-      }
-    } else {
-      return CONFIGURED_BACKEND_URL;
-    }
-  }
-
-  // Same-origin relative path (standard for Vercel serverless /api and local dev)
-  return '';
+  return API_BASE_URL;
 }
 
 /**
- * Returns the fully qualified or relative URL for any API endpoint path.
- * Ensures the path starts with '/' and prepends the API base URL when required.
+ * Returns the relative or absolute URL for any API endpoint path.
+ * On Vercel production (https://mk-forge-auto.vercel.app),
+ * relative paths like '/api/auth/login' remain relative,
+ * executing as https://mk-forge-auto.vercel.app/api/auth/login.
  */
 export function getApiUrl(path: string): string {
   if (!path) return '';
   if (path.startsWith('http://') || path.startsWith('https://')) {
+    // If an obsolete Cloud Run URL was stored in database or state, strip to relative path
+    if (path.includes('run.app')) {
+      try {
+        const parsed = new URL(path);
+        return `${parsed.pathname}${parsed.search}`;
+      } catch {
+        return path;
+      }
+    }
     return path;
   }
 
@@ -76,7 +53,7 @@ export async function apiFetch(path: string, init?: RequestInit): Promise<Respon
 
 /**
  * Resolves media URLs (e.g. /uploads/...) so that uploaded assets
- * can be loaded seamlessly whether hosted on Vercel or an external backend.
+ * load seamlessly from the same origin on Vercel.
  */
 export function resolveMediaUrl(url?: string | null): string {
   if (!url) return '';
@@ -86,12 +63,15 @@ export function resolveMediaUrl(url?: string | null): string {
     url.startsWith('data:') ||
     url.startsWith('blob:')
   ) {
+    if (url.includes('run.app')) {
+      try {
+        const parsed = new URL(url);
+        return `${parsed.pathname}${parsed.search}`;
+      } catch {
+        return url;
+      }
+    }
     return url;
-  }
-
-  if (url.startsWith('/uploads/')) {
-    const baseUrl = getApiBaseUrl();
-    return baseUrl ? `${baseUrl}${url}` : url;
   }
 
   return url;

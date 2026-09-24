@@ -17,7 +17,7 @@ import {
   AppearanceConfig,
   HomeBackgroundConfig,
   MediaAssetItem,
-} from '../src/types';
+} from '../src/types.ts';
 
 export interface StoredUser {
   id: string;
@@ -47,30 +47,75 @@ export interface DatabaseSchema {
   mediaAssets?: MediaAssetItem[];
 }
 
-const DB_PATH = path.join(process.cwd(), 'server', 'db.json');
+const DEFAULT_DB_PATH = path.join(process.cwd(), 'server', 'db.json');
+const TMP_DB_PATH = path.join('/tmp', 'db.json');
 
 export class Database {
-  private static load(): DatabaseSchema {
-    try {
-      if (!fs.existsSync(DB_PATH)) {
-        throw new Error(`Database file not found at ${DB_PATH}`);
+  private static cachedData: DatabaseSchema | null = null;
+
+  private static getWorkingDbPath(): string {
+    if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+      if (!fs.existsSync(TMP_DB_PATH)) {
+        try {
+          if (fs.existsSync(DEFAULT_DB_PATH)) {
+            fs.copyFileSync(DEFAULT_DB_PATH, TMP_DB_PATH);
+          }
+        } catch (e) {
+          console.warn('[DB] Could not copy db.json to /tmp:', e);
+        }
       }
-      const raw = fs.readFileSync(DB_PATH, 'utf-8');
-      return JSON.parse(raw) as DatabaseSchema;
+      return TMP_DB_PATH;
+    }
+    return DEFAULT_DB_PATH;
+  }
+
+  private static load(): DatabaseSchema {
+    if (this.cachedData) {
+      return this.cachedData;
+    }
+
+    try {
+      const activePath = this.getWorkingDbPath();
+      if (fs.existsSync(activePath)) {
+        const raw = fs.readFileSync(activePath, 'utf-8');
+        this.cachedData = JSON.parse(raw) as DatabaseSchema;
+        return this.cachedData;
+      }
+
+      if (fs.existsSync(DEFAULT_DB_PATH)) {
+        const raw = fs.readFileSync(DEFAULT_DB_PATH, 'utf-8');
+        this.cachedData = JSON.parse(raw) as DatabaseSchema;
+        return this.cachedData;
+      }
+
+      throw new Error(`Database file not found at ${activePath} or ${DEFAULT_DB_PATH}`);
     } catch (err) {
       console.error('[DB] Error loading database:', err);
+      if (this.cachedData) {
+        return this.cachedData;
+      }
       throw err;
     }
   }
 
   private static save(data: DatabaseSchema): void {
+    this.cachedData = data;
+    let targetPath = DEFAULT_DB_PATH;
     try {
-      const tempPath = `${DB_PATH}.tmp`;
+      targetPath = this.getWorkingDbPath();
+      const tempPath = `${targetPath}.tmp`;
       fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf-8');
-      fs.renameSync(tempPath, DB_PATH);
+      fs.renameSync(tempPath, targetPath);
     } catch (err) {
-      console.error('[DB] Error saving database:', err);
-      throw err;
+      console.warn('[DB] Warning saving database to disk (keeping in-memory state):', err);
+      // Try writing to /tmp/db.json if default path was read-only
+      try {
+        if (!fs.existsSync(TMP_DB_PATH) || targetPath !== TMP_DB_PATH) {
+          fs.writeFileSync(TMP_DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+        }
+      } catch {
+        // In-memory cache is maintained
+      }
     }
   }
 

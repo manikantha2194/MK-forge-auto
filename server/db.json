@@ -814,46 +814,6 @@
   },
   "mediaAssets": [
     {
-      "id": "media-1790171721605-p08i4",
-      "filename": "2navi-1790171721602-378334.png",
-      "url": "/uploads/2navi-1790171721602-378334.png",
-      "originalName": "2navi.png",
-      "name": "2navi",
-      "size": 612828,
-      "createdAt": "2026-09-23T13:55:21.605Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1790171714339-r6u7o",
-      "filename": "brand-1790171714330-69805.png",
-      "url": "/uploads/brand-1790171714330-69805.png",
-      "originalName": "brand.png",
-      "name": "brand",
-      "size": 983963,
-      "createdAt": "2026-09-23T13:55:14.339Z",
-      "usage": "general"
-    },
-    {
-      "id": "media-1790171704869-p5f47",
-      "filename": "2nd_image-1790171704860-374338.png",
-      "url": "/uploads/2nd_image-1790171704860-374338.png",
-      "originalName": "2nd image.png",
-      "name": "2nd image",
-      "size": 1342805,
-      "createdAt": "2026-09-23T13:55:04.869Z",
-      "usage": "about"
-    },
-    {
-      "id": "media-1790171696683-9xx43",
-      "filename": "2ndchar-1790171696664-685693.png",
-      "url": "/uploads/2ndchar-1790171696664-685693.png",
-      "originalName": "2ndchar.png",
-      "name": "2ndchar",
-      "size": 2151311,
-      "createdAt": "2026-09-23T13:54:56.684Z",
-      "usage": "home-character"
-    },
-    {
       "id": "media-1790156778919-f3qjo",
       "filename": "test-char-1790156778912-713222.svg",
       "url": "/uploads/test-char-1790156778912-713222.svg",

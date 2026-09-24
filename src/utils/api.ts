@@ -2,67 +2,56 @@
  * API configuration and utility functions for communicating with
  * the backend authentication and portfolio management server.
  *
- * Ensures authentication, asset uploads, and profile modifications
- * connect to the real deployed backend service (APP_URL) when
- * running on Vercel deployments, custom domains, or local environments.
+ * Supports both:
+ * 1. Single-origin Vercel deployment (where Express runs as a Vercel Serverless function at /api/*).
+ * 2. External dedicated backend service (if VITE_APP_URL is explicitly set to an external host).
  */
 
-// Deployed Cloud Run backend service URL (from environment or production deployment)
-export const DEPLOYED_BACKEND_URL: string = (
-  (import.meta.env.VITE_APP_URL as string) ||
-  'https://ais-dev-pckpcvo3je4jpqrb53lcee-624129667025.asia-southeast1.run.app'
-)
-  .trim()
-  .replace(/\/+$/, '');
+const rawAppUrl = (import.meta.env.VITE_APP_URL as string | undefined)?.trim() || '';
+
+// Clean the configured backend URL
+function sanitizeBackendUrl(url: string): string {
+  if (!url) return '';
+  const cleaned = url.replace(/\/+$/, '');
+  // Ignore localhost and placeholder URLs when determining an external production backend
+  if (
+    cleaned.includes('example.com') ||
+    cleaned.includes('localhost') ||
+    cleaned.includes('127.0.0.1')
+  ) {
+    return '';
+  }
+  return cleaned;
+}
+
+export const CONFIGURED_BACKEND_URL: string = sanitizeBackendUrl(rawAppUrl);
 
 /**
  * Returns the base URL for API calls.
- * If running on Vercel, Netlify, or an external host, this returns the real deployed backend URL.
- * If running on the same origin (local dev server or Cloud Run instance), returns empty string for relative paths.
+ * If VITE_APP_URL is explicitly configured with an external backend host (e.g. Render, Railway, AWS),
+ * this returns that backend URL.
+ * Otherwise (default for Vercel unified deployments, preview environments, and local dev),
+ * returns empty string for same-origin relative API paths.
  */
 export function getApiBaseUrl(): string {
-  if (typeof window !== 'undefined') {
-    const currentOrigin = window.location.origin;
-    const currentHostname = window.location.hostname;
-
-    // Detect if we are running on Vercel or an external frontend host
-    const isVercel =
-      currentHostname.includes('vercel.app') ||
-      currentHostname.includes('now.sh');
-
-    const isExternalDomain =
-      isVercel ||
-      currentHostname.includes('netlify.app') ||
-      (currentOrigin !== DEPLOYED_BACKEND_URL &&
-        !currentHostname.includes('run.app') &&
-        currentHostname !== 'localhost' &&
-        currentHostname !== '127.0.0.1');
-
-    if (isExternalDomain) {
-      return DEPLOYED_BACKEND_URL;
+  if (CONFIGURED_BACKEND_URL) {
+    if (typeof window !== 'undefined') {
+      const currentOrigin = window.location.origin;
+      // Only prepend if backend is on a different origin than current window
+      if (CONFIGURED_BACKEND_URL !== currentOrigin) {
+        return CONFIGURED_BACKEND_URL;
+      }
+    } else {
+      return CONFIGURED_BACKEND_URL;
     }
   }
 
-  // If VITE_APP_URL is explicitly set to a non-localhost, non-example URL
-  if (
-    DEPLOYED_BACKEND_URL &&
-    !DEPLOYED_BACKEND_URL.includes('example.com') &&
-    !DEPLOYED_BACKEND_URL.includes('localhost')
-  ) {
-    if (
-      typeof window !== 'undefined' &&
-      window.location.hostname !== 'localhost' &&
-      window.location.hostname !== '127.0.0.1'
-    ) {
-      return DEPLOYED_BACKEND_URL;
-    }
-  }
-
+  // Same-origin relative path (standard for Vercel serverless /api and local dev)
   return '';
 }
 
 /**
- * Returns the fully qualified URL for any API endpoint path.
+ * Returns the fully qualified or relative URL for any API endpoint path.
  * Ensures the path starts with '/' and prepends the API base URL when required.
  */
 export function getApiUrl(path: string): string {
@@ -87,7 +76,7 @@ export async function apiFetch(path: string, init?: RequestInit): Promise<Respon
 
 /**
  * Resolves media URLs (e.g. /uploads/...) so that uploaded assets
- * hosted on the backend server can be rendered from Vercel deployments.
+ * can be loaded seamlessly whether hosted on Vercel or an external backend.
  */
 export function resolveMediaUrl(url?: string | null): string {
   if (!url) return '';

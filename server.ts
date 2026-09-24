@@ -10,15 +10,39 @@ import { Database, StoredUser } from './server/db.ts';
 const PORT = 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'manikantha-portfolio-jwt-secret-key-2026-futuristic';
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+// Ensure uploads directory exists (support both local project dir and /tmp for serverless/Vercel)
+const defaultUploadsDir = path.join(process.cwd(), 'public', 'uploads');
+const tmpUploadsDir = path.join('/tmp', 'uploads');
+
+let uploadsDir = defaultUploadsDir;
+try {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+} catch {
+  uploadsDir = tmpUploadsDir;
+  try {
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+  } catch {
+    // Already exists or fallback
+  }
 }
 
 // Multer Storage Configuration
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
+    try {
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+    } catch {
+      uploadsDir = tmpUploadsDir;
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+    }
     cb(null, uploadsDir);
   },
   filename: (_req, file, cb) => {
@@ -145,41 +169,55 @@ function requireAdmin(req: AuthenticatedRequest, res: Response, next: NextFuncti
   });
 }
 
-async function startServer() {
-  const app = express();
+export const app = express();
 
-  // CORS middleware: allow requests from Vercel deployments, custom domains, and preview URLs
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    const origin = req.headers.origin;
-    if (origin) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-    } else {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-    }
-    res.setHeader(
-      'Access-Control-Allow-Methods',
-      'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS'
-    );
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma'
-    );
-    res.setHeader('Access-Control-Max-Age', '86400');
+// Path normalization for serverless function rewrites
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  const original = (req.headers['x-forwarded-uri'] as string) || req.originalUrl || req.url;
+  if (original && original.startsWith('/api') && !req.url.startsWith('/api')) {
+    req.url = original;
+  } else if (req.url && !req.url.startsWith('/api') && !req.url.startsWith('/uploads') && !req.url.startsWith('/assets')) {
+    const prefix = req.url.startsWith('/') ? '' : '/';
+    req.url = `/api${prefix}${req.url}`;
+  }
+  next();
+});
 
-    if (req.method === 'OPTIONS') {
-      res.status(200).end();
-      return;
-    }
-    next();
-  });
+// CORS middleware: allow requests from Vercel deployments, custom domains, and preview URLs
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma'
+  );
+  res.setHeader('Access-Control-Max-Age', '86400');
 
-  app.use(express.json({ limit: '20mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  next();
+});
 
-  // Serve uploads and static public assets
-  app.use('/uploads', express.static(uploadsDir));
-  app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')));
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+
+// Serve uploads and static public assets
+app.use('/uploads', express.static(defaultUploadsDir));
+app.use('/uploads', express.static(tmpUploadsDir));
+app.use('/api/uploads', express.static(defaultUploadsDir));
+app.use('/api/uploads', express.static(tmpUploadsDir));
+app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')));
 
   // Health check
   app.get('/api/health', (_req: Request, res: Response) => {
@@ -653,9 +691,17 @@ async function startServer() {
       const { filename } = req.params;
       // Prevent directory traversal
       const safeFilename = path.basename(filename);
-      const targetPath = path.join(uploadsDir, safeFilename);
-      if (fs.existsSync(targetPath)) {
-        fs.unlinkSync(targetPath);
+      const pathsToCheck = [
+        path.join(uploadsDir, safeFilename),
+        path.join(defaultUploadsDir, safeFilename),
+        path.join(tmpUploadsDir, safeFilename),
+      ];
+      for (const p of pathsToCheck) {
+        try {
+          if (fs.existsSync(p)) fs.unlinkSync(p);
+        } catch {
+          // ignore error
+        }
       }
       Database.deleteMediaAsset(safeFilename);
       res.json({ success: true, filename: safeFilename });
@@ -1085,6 +1131,9 @@ async function startServer() {
     }
   });
 
+export default app;
+
+async function startServer() {
   // ==========================================
   // VITE OR STATIC SERVING
   // ==========================================
@@ -1107,7 +1156,17 @@ async function startServer() {
   });
 }
 
-startServer().catch(err => {
-  console.error('[SERVER] Fatal server error:', err);
-  process.exit(1);
-});
+const isMainModule = Boolean(
+  process.argv[1] &&
+  (process.argv[1].endsWith('server.ts') ||
+   process.argv[1].endsWith('server.cjs') ||
+   process.argv[1].endsWith('server.js'))
+);
+
+// Only launch standalone listener when executed directly (not in Vercel Serverless environment or when imported)
+if (isMainModule && process.env.VERCEL !== '1' && !process.env.NOW_REGION && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  startServer().catch(err => {
+    console.error('[SERVER] Fatal server error:', err);
+    process.exit(1);
+  });
+}

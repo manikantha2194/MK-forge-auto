@@ -1,13 +1,14 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import fs from 'fs';
-import { createServer as createViteServer } from 'vite';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
-import { Database, StoredUser } from './server/db.ts';
+import { Database } from './server/db.ts';
+import type { StoredUser } from './server/db.ts';
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'manikantha-portfolio-jwt-secret-key-2026-futuristic';
 
 // Ensure uploads directory exists (support both local project dir and /tmp for serverless/Vercel)
@@ -1138,6 +1139,7 @@ async function startServer() {
   // VITE OR STATIC SERVING
   // ==========================================
   if (process.env.NODE_ENV !== 'production') {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',

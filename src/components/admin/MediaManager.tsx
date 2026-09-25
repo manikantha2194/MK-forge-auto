@@ -537,6 +537,36 @@ export const MediaManager: React.FC = () => {
         });
       }
 
+      if (typeof window !== 'undefined') {
+        const storedProfile = localStorage.getItem('mk_persisted_profile');
+        if (storedProfile) {
+          try {
+            const p = JSON.parse(storedProfile);
+            p.media = { ...(p.media || {}), [slotKey]: url };
+            localStorage.setItem('mk_persisted_profile', JSON.stringify(p));
+          } catch { /* ignore */ }
+        }
+        if (slotKey === 'heroCharacter') {
+          const storedHero = localStorage.getItem('mk_persisted_hero_config');
+          if (storedHero) {
+            try {
+              const h = JSON.parse(storedHero);
+              h.profileImage = url;
+              localStorage.setItem('mk_persisted_hero_config', JSON.stringify(h));
+            } catch { /* ignore */ }
+          }
+        } else if (slotKey === 'aboutPhoto') {
+          const storedAbout = localStorage.getItem('mk_persisted_about_config');
+          if (storedAbout) {
+            try {
+              const a = JSON.parse(storedAbout);
+              a.profileImage = url;
+              localStorage.setItem('mk_persisted_about_config', JSON.stringify(a));
+            } catch { /* ignore */ }
+          }
+        }
+      }
+
       await Promise.all([
         refreshProfile(),
         refreshHeroConfig(),
@@ -568,6 +598,8 @@ export const MediaManager: React.FC = () => {
         throw new Error(uploadData.error || 'Upload failed');
       }
 
+      const newUrl = uploadData.fileUrl;
+
       const updateRes = await apiFetch('/api/profile', {
         method: 'PUT',
         headers: {
@@ -577,7 +609,7 @@ export const MediaManager: React.FC = () => {
         body: JSON.stringify({
           media: {
             ...profile?.media,
-            [slotKey]: uploadData.fileUrl,
+            [slotKey]: newUrl,
           },
         }),
       });
@@ -594,7 +626,7 @@ export const MediaManager: React.FC = () => {
             'Content-Type': 'application/json',
             ...(activeToken ? { Authorization: `Bearer ${activeToken}` } : {}),
           },
-          body: JSON.stringify({ profileImage: uploadData.fileUrl }),
+          body: JSON.stringify({ profileImage: newUrl }),
         });
       } else if (slotKey === 'aboutPhoto') {
         await apiFetch('/api/about-config', {
@@ -603,8 +635,38 @@ export const MediaManager: React.FC = () => {
             'Content-Type': 'application/json',
             ...(activeToken ? { Authorization: `Bearer ${activeToken}` } : {}),
           },
-          body: JSON.stringify({ profileImage: uploadData.fileUrl }),
+          body: JSON.stringify({ profileImage: newUrl }),
         });
+      }
+
+      if (typeof window !== 'undefined') {
+        const storedProfile = localStorage.getItem('mk_persisted_profile');
+        if (storedProfile) {
+          try {
+            const p = JSON.parse(storedProfile);
+            p.media = { ...(p.media || {}), [slotKey]: newUrl };
+            localStorage.setItem('mk_persisted_profile', JSON.stringify(p));
+          } catch { /* ignore */ }
+        }
+        if (slotKey === 'heroCharacter') {
+          const storedHero = localStorage.getItem('mk_persisted_hero_config');
+          if (storedHero) {
+            try {
+              const h = JSON.parse(storedHero);
+              h.profileImage = newUrl;
+              localStorage.setItem('mk_persisted_hero_config', JSON.stringify(h));
+            } catch { /* ignore */ }
+          }
+        } else if (slotKey === 'aboutPhoto') {
+          const storedAbout = localStorage.getItem('mk_persisted_about_config');
+          if (storedAbout) {
+            try {
+              const a = JSON.parse(storedAbout);
+              a.profileImage = newUrl;
+              localStorage.setItem('mk_persisted_about_config', JSON.stringify(a));
+            } catch { /* ignore */ }
+          }
+        }
       }
 
       await Promise.all([
@@ -664,6 +726,36 @@ export const MediaManager: React.FC = () => {
           },
           body: JSON.stringify({ profileImage: slot.defaultUrl }),
         });
+      }
+
+      if (typeof window !== 'undefined') {
+        const storedProfile = localStorage.getItem('mk_persisted_profile');
+        if (storedProfile) {
+          try {
+            const p = JSON.parse(storedProfile);
+            p.media = { ...(p.media || {}), [slot.key]: slot.defaultUrl };
+            localStorage.setItem('mk_persisted_profile', JSON.stringify(p));
+          } catch { /* ignore */ }
+        }
+        if (slot.key === 'heroCharacter') {
+          const storedHero = localStorage.getItem('mk_persisted_hero_config');
+          if (storedHero) {
+            try {
+              const h = JSON.parse(storedHero);
+              h.profileImage = slot.defaultUrl;
+              localStorage.setItem('mk_persisted_hero_config', JSON.stringify(h));
+            } catch { /* ignore */ }
+          }
+        } else if (slot.key === 'aboutPhoto') {
+          const storedAbout = localStorage.getItem('mk_persisted_about_config');
+          if (storedAbout) {
+            try {
+              const a = JSON.parse(storedAbout);
+              a.profileImage = slot.defaultUrl;
+              localStorage.setItem('mk_persisted_about_config', JSON.stringify(a));
+            } catch { /* ignore */ }
+          }
+        }
       }
 
       await Promise.all([

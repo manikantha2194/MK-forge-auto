@@ -79,7 +79,14 @@ interface PortfolioContextType {
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [profile, setProfile] = useState<ProfileConfig | null>(null);
+  const [profile, setProfile] = useState<ProfileConfig | null>(() => {
+    try {
+      const stored = localStorage.getItem('mk_persisted_profile');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
   const [stats, setStats] = useState<StatItem[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [content, setContent] = useState<ContentItem[]>([]);
@@ -88,8 +95,22 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [certifications, setCertifications] = useState<CertificationItem[]>([]);
   const [socialLinks, setSocialLinks] = useState<SocialLinkItem[]>([]);
-  const [heroConfig, setHeroConfig] = useState<HeroEditorConfig | null>(null);
-  const [aboutConfig, setAboutConfig] = useState<AboutEditorConfig | null>(null);
+  const [heroConfig, setHeroConfig] = useState<HeroEditorConfig | null>(() => {
+    try {
+      const stored = localStorage.getItem('mk_persisted_hero_config');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [aboutConfig, setAboutConfig] = useState<AboutEditorConfig | null>(() => {
+    try {
+      const stored = localStorage.getItem('mk_persisted_about_config');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
   const [contactConfig, setContactConfig] = useState<ContactEditorConfig | null>(null);
   const [appearance, setAppearance] = useState<AppearanceConfig | null>(null);
   const [homeBackground, setHomeBackground] = useState<HomeBackgroundConfig | null>(null);
@@ -99,7 +120,29 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const fetchProfile = useCallback(async () => {
     try {
       const res = await apiFetch('/api/profile');
-      if (res.ok) setProfile(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        const stored = localStorage.getItem('mk_persisted_profile');
+        let merged = data;
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed.media) {
+              merged = {
+                ...data,
+                media: {
+                  ...data.media,
+                  ...parsed.media,
+                },
+              };
+            }
+          } catch {
+            // ignore parse error
+          }
+        }
+        setProfile(merged);
+        localStorage.setItem('mk_persisted_profile', JSON.stringify(merged));
+      }
     } catch (e) {
       console.error('Failed to fetch profile', e);
     }
@@ -180,7 +223,23 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const fetchHeroConfig = useCallback(async () => {
     try {
       const res = await apiFetch('/api/hero-config');
-      if (res.ok) setHeroConfig(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        const stored = localStorage.getItem('mk_persisted_hero_config');
+        let merged = data;
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed.profileImage) {
+              merged = { ...data, profileImage: parsed.profileImage };
+            }
+          } catch {
+            // ignore
+          }
+        }
+        setHeroConfig(merged);
+        localStorage.setItem('mk_persisted_hero_config', JSON.stringify(merged));
+      }
     } catch (e) {
       console.error('Failed to fetch hero config', e);
     }
@@ -189,7 +248,23 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const fetchAboutConfig = useCallback(async () => {
     try {
       const res = await apiFetch('/api/about-config');
-      if (res.ok) setAboutConfig(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        const stored = localStorage.getItem('mk_persisted_about_config');
+        let merged = data;
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed.profileImage) {
+              merged = { ...data, profileImage: parsed.profileImage };
+            }
+          } catch {
+            // ignore
+          }
+        }
+        setAboutConfig(merged);
+        localStorage.setItem('mk_persisted_about_config', JSON.stringify(merged));
+      }
     } catch (e) {
       console.error('Failed to fetch about config', e);
     }
@@ -282,6 +357,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (res.ok) {
         const data = await res.json();
         setHeroConfig(data);
+        localStorage.setItem('mk_persisted_hero_config', JSON.stringify(data));
         fetchProfile();
         return true;
       }
@@ -301,6 +377,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (res.ok) {
         const data = await res.json();
         setAboutConfig(data);
+        localStorage.setItem('mk_persisted_about_config', JSON.stringify(data));
         fetchProfile();
         return true;
       }
@@ -320,6 +397,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (res.ok) {
         const data = await res.json();
         setProfile(data);
+        localStorage.setItem('mk_persisted_profile', JSON.stringify(data));
         fetchHeroConfig();
         fetchAboutConfig();
         return true;

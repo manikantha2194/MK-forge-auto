@@ -119,15 +119,15 @@ export const HomeHeroManager: React.FC = () => {
       const currentMedia = profile?.media || {
         heroCharacter: '/assets/hero-character.svg',
         aboutPhoto: '/assets/about-manikantha.svg',
-        brandIcon: '/favicon.svg',
-        brandBanner: '/brand-banner.svg',
+        brandIcon: '/assets/mk-logo.svg',
+        brandBanner: '/assets/mk-forge-auto.svg',
       };
       await updateProfile?.({
         media: {
           heroCharacter: form.profileImage,
           aboutPhoto: currentMedia.aboutPhoto || '/assets/about-manikantha.svg',
-          brandIcon: currentMedia.brandIcon || '/favicon.svg',
-          brandBanner: currentMedia.brandBanner || '/brand-banner.svg',
+          brandIcon: currentMedia.brandIcon || '/assets/mk-logo.svg',
+          brandBanner: currentMedia.brandBanner || '/assets/mk-forge-auto.svg',
         },
       });
     }

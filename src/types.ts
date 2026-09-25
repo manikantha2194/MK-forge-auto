@@ -227,6 +227,8 @@ export interface MediaAssetItem {
   id: string;
   filename: string;
   url: string;
+  dataUrl?: string;
+  mimeType?: string;
   originalName?: string;
   name?: string;
   size: number;

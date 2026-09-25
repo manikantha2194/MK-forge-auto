@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import initialDbData from './db.json' with { type: 'json' };
 import type {
   ProfileConfig,
   StatItem,
@@ -87,35 +88,49 @@ export class Database {
         this.cachedData = JSON.parse(raw) as DatabaseSchema;
         return this.cachedData;
       }
-
-      throw new Error(`Database file not found at ${activePath} or ${DEFAULT_DB_PATH}`);
     } catch (err) {
-      console.error('[DB] Error loading database:', err);
-      if (this.cachedData) {
-        return this.cachedData;
-      }
-      throw err;
+      console.warn('[DB] Warning loading database from filesystem, falling back to embedded db:', err);
     }
+
+    // Safe fallback to embedded initialDbData
+    this.cachedData = JSON.parse(JSON.stringify(initialDbData)) as DatabaseSchema;
+    try {
+      if (!fs.existsSync(TMP_DB_PATH)) {
+        fs.writeFileSync(TMP_DB_PATH, JSON.stringify(this.cachedData, null, 2), 'utf-8');
+      }
+    } catch {
+      // In-memory fallback
+    }
+    return this.cachedData;
   }
 
   private static save(data: DatabaseSchema): void {
     this.cachedData = data;
-    let targetPath = DEFAULT_DB_PATH;
     try {
-      targetPath = this.getWorkingDbPath();
+      const targetPath = this.getWorkingDbPath();
       const tempPath = `${targetPath}.tmp`;
       fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf-8');
       fs.renameSync(tempPath, targetPath);
     } catch (err) {
       console.warn('[DB] Warning saving database to disk (keeping in-memory state):', err);
-      // Try writing to /tmp/db.json if default path was read-only
-      try {
-        if (!fs.existsSync(TMP_DB_PATH) || targetPath !== TMP_DB_PATH) {
-          fs.writeFileSync(TMP_DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
-        }
-      } catch {
-        // In-memory cache is maintained
+    }
+
+    // Ensure /tmp/db.json is also updated for warm lambda invocations
+    try {
+      if (TMP_DB_PATH) {
+        fs.writeFileSync(TMP_DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
       }
+    } catch {
+      // In-memory cache is maintained
+    }
+
+    // Also attempt persisting to DEFAULT_DB_PATH if writable
+    try {
+      if (fs.existsSync(DEFAULT_DB_PATH) && DEFAULT_DB_PATH !== TMP_DB_PATH) {
+        fs.writeFileSync(DEFAULT_DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+      }
+    } catch {
+      // ignore read-only fs
     }
   }
 
@@ -1064,69 +1079,102 @@ export class Database {
   // ==========================================
   // MEDIA ASSETS MANAGEMENT
   // ==========================================
+  public static getMediaAssetByFilename(filename: string): MediaAssetItem | undefined {
+    const data = this.load();
+    const safe = path.basename(filename);
+    return (data.mediaAssets || []).find(
+      a => a.filename === safe ||
+           a.url === `/uploads/${safe}` ||
+           a.url === `/api/uploads/${safe}` ||
+           a.url.endsWith(`/${safe}`)
+    );
+  }
+
+  public static getMediaAssetByUrl(url: string): MediaAssetItem | undefined {
+    const data = this.load();
+    const cleanUrl = url.split('?')[0];
+    const filename = path.basename(cleanUrl);
+    return (data.mediaAssets || []).find(
+      a => a.url === url || a.url === cleanUrl || a.filename === filename
+    );
+  }
+
   public static getMediaAssets(): MediaAssetItem[] {
     const data = this.load();
-    const storedAssets = data.mediaAssets || [];
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+    const storedAssets = [...(data.mediaAssets || [])];
+    const defaultUploadsDir = path.join(process.cwd(), 'public', 'uploads');
+    const tmpUploadsDir = path.join('/tmp', 'uploads');
 
-    if (!fs.existsSync(uploadsDir)) {
-      return storedAssets;
-    }
-
-    const files = fs.readdirSync(uploadsDir);
-    const existingFilenames = new Set(files);
+    const dirsToCheck = [defaultUploadsDir, tmpUploadsDir];
     let changed = false;
 
-    // Filter out records whose files were deleted from disk
-    let activeAssets = storedAssets.filter(asset => existingFilenames.has(asset.filename));
-    if (activeAssets.length !== storedAssets.length) {
-      changed = true;
-    }
+    for (const dir of dirsToCheck) {
+      if (fs.existsSync(dir)) {
+        try {
+          const files = fs.readdirSync(dir);
+          for (const filename of files) {
+            if (filename === '.gitkeep') continue;
+            let found = storedAssets.find(a => a.filename === filename);
+            const filePath = path.join(dir, filename);
+            let dataUrl: string | undefined;
 
-    // For any file in uploadsDir that doesn't have an asset record yet, create one
-    for (const filename of files) {
-      const found = activeAssets.find(a => a.filename === filename);
-      if (!found) {
-        const filePath = path.join(uploadsDir, filename);
-        const stats = fs.statSync(filePath);
-        
-        // Infer default usage based on current profile references
-        let inferredUsage: MediaAssetItem['usage'] = 'general';
-        const url = `/uploads/${filename}`;
+            try {
+              const fileBuffer = fs.readFileSync(filePath);
+              const ext = path.extname(filename).toLowerCase();
+              let mime = 'image/png';
+              if (ext === '.svg') mime = 'image/svg+xml';
+              else if (ext === '.jpg' || ext === '.jpeg') mime = 'image/jpeg';
+              else if (ext === '.webp') mime = 'image/webp';
+              else if (ext === '.gif') mime = 'image/gif';
+              dataUrl = `data:${mime};base64,${fileBuffer.toString('base64')}`;
+            } catch {
+              // ignore buffer read error
+            }
 
-        if (data.profile?.media?.heroCharacter === url) {
-          inferredUsage = 'home-character';
-        } else if (data.profile?.media?.aboutPhoto === url) {
-          inferredUsage = 'about';
-        } else if (
-          data.homeBackground?.backgroundImage === url ||
-          data.homeBackground?.panels?.some(p => p.imageUrl === url)
-        ) {
-          inferredUsage = 'home-background';
+            if (!found) {
+              const stats = fs.statSync(filePath);
+              let inferredUsage: MediaAssetItem['usage'] = 'general';
+              const url = `/uploads/${filename}`;
+
+              if (data.profile?.media?.heroCharacter === url) {
+                inferredUsage = 'home-character';
+              } else if (data.profile?.media?.aboutPhoto === url) {
+                inferredUsage = 'about';
+              } else if (data.profile?.media?.brandIcon === url) {
+                inferredUsage = 'general';
+              }
+
+              const friendlyName = filename.replace(/-\d+-\d+\.[^.]+$/, '').replace(/[-_]/g, ' ');
+
+              storedAssets.push({
+                id: `media-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+                filename,
+                url,
+                dataUrl,
+                name: friendlyName,
+                originalName: filename,
+                size: stats.size,
+                createdAt: stats.birthtime ? stats.birthtime.toISOString() : new Date().toISOString(),
+                usage: inferredUsage,
+              });
+              changed = true;
+            } else if (!found.dataUrl && dataUrl) {
+              found.dataUrl = dataUrl;
+              changed = true;
+            }
+          }
+        } catch (e) {
+          console.warn('[DB] Error scanning uploads directory:', e);
         }
-
-        const friendlyName = filename.replace(/-\d+-\d+\.[^.]+$/, '').replace(/[-_]/g, ' ');
-
-        activeAssets.push({
-          id: `media-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-          filename,
-          url,
-          name: friendlyName,
-          originalName: filename,
-          size: stats.size,
-          createdAt: stats.birthtime.toISOString(),
-          usage: inferredUsage,
-        });
-        changed = true;
       }
     }
 
     if (changed) {
-      data.mediaAssets = activeAssets;
+      data.mediaAssets = storedAssets;
       this.save(data);
     }
 
-    return activeAssets.sort(
+    return storedAssets.sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }
@@ -1138,6 +1186,8 @@ export class Database {
       id: asset.id || `media-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       filename: asset.filename,
       url: asset.url,
+      dataUrl: asset.dataUrl,
+      mimeType: asset.mimeType,
       originalName: asset.originalName || asset.filename,
       name: asset.name || asset.filename.replace(/-\d+-\d+\.[^.]+$/, '').replace(/[-_]/g, ' '),
       size: asset.size,

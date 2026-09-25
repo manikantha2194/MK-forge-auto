@@ -31,32 +31,12 @@ try {
   }
 }
 
-// Multer Storage Configuration
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    try {
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-      }
-    } catch {
-      uploadsDir = tmpUploadsDir;
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-      }
-    }
-    cb(null, uploadsDir);
-  },
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const safeName = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e6)}`;
-    cb(null, `${safeName}-${uniqueSuffix}${ext}`);
-  },
-});
+// Multer Storage Configuration (In-Memory for Vercel Serverless compatibility + disk cache)
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 15 * 1024 * 1024 }, // 15MB
   fileFilter: (_req, file, cb) => {
     const allowedMimeTypes = [
       'image/png',
@@ -175,11 +155,13 @@ export const app = express();
 // Path normalization for serverless function rewrites
 app.use((req: Request, _res: Response, next: NextFunction) => {
   const original = (req.headers['x-forwarded-uri'] as string) || req.originalUrl || req.url;
-  if (original && original.startsWith('/api') && !req.url.startsWith('/api')) {
-    req.url = original;
-  } else if (req.url && !req.url.startsWith('/api') && !req.url.startsWith('/uploads') && !req.url.startsWith('/assets')) {
-    const prefix = req.url.startsWith('/') ? '' : '/';
-    req.url = `/api${prefix}${req.url}`;
+  if (original) {
+    if (original.startsWith('/uploads') || original.startsWith('/assets') || original.startsWith('/api')) {
+      req.url = original;
+    } else if (!req.url.startsWith('/api') && !req.url.startsWith('/uploads') && !req.url.startsWith('/assets')) {
+      const prefix = req.url.startsWith('/') ? '' : '/';
+      req.url = `/api${prefix}${req.url}`;
+    }
   }
   next();
 });
@@ -212,6 +194,63 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+
+// Dedicated Media Delivery Handler (supports disk cache + database dataUrl fallback + mime types)
+app.get(['/uploads/:filename', '/api/uploads/:filename'], (req: Request, res: Response) => {
+  const rawParam = req.params.filename || '';
+  const cleanFilename = path.basename(rawParam.split('?')[0]);
+
+  // 1. Try serving from local disk first
+  const candidateDirs = [uploadsDir, defaultUploadsDir, tmpUploadsDir];
+  for (const dir of candidateDirs) {
+    const filePath = path.join(dir, cleanFilename);
+    if (fs.existsSync(filePath)) {
+      try {
+        if (fs.statSync(filePath).isFile()) {
+          return res.sendFile(filePath);
+        }
+      } catch {
+        // ignore
+      }
+    }
+  }
+
+  // 2. Fallback to Database dataUrl
+  const asset = Database.getMediaAssetByFilename(cleanFilename);
+  if (asset?.dataUrl) {
+    const match = asset.dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+    if (match) {
+      const mimeType = match[1];
+      const buffer = Buffer.from(match[2], 'base64');
+      
+      // Cache to /tmp/uploads on this container for next requests
+      try {
+        if (!fs.existsSync(tmpUploadsDir)) fs.mkdirSync(tmpUploadsDir, { recursive: true });
+        fs.writeFileSync(path.join(tmpUploadsDir, cleanFilename), buffer);
+      } catch {
+        // ignore cache write error
+      }
+
+      res.setHeader('Content-Type', mimeType);
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      return res.send(buffer);
+    }
+  }
+
+  // 3. Fallback for known asset naming conventions
+  if (cleanFilename.includes('char') || cleanFilename.includes('hero')) {
+    const fallbackPath = path.join(process.cwd(), 'public', 'assets', 'hero-character.svg');
+    if (fs.existsSync(fallbackPath)) return res.sendFile(fallbackPath);
+  } else if (cleanFilename.includes('about') || cleanFilename.includes('photo') || cleanFilename.includes('image')) {
+    const fallbackPath = path.join(process.cwd(), 'public', 'assets', 'about-manikantha.svg');
+    if (fs.existsSync(fallbackPath)) return res.sendFile(fallbackPath);
+  } else if (cleanFilename.includes('brand') || cleanFilename.includes('logo') || cleanFilename.includes('icon')) {
+    const fallbackPath = path.join(process.cwd(), 'public', 'assets', 'mk-logo.svg');
+    if (fs.existsSync(fallbackPath)) return res.sendFile(fallbackPath);
+  }
+
+  res.status(404).json({ error: 'Media file not found' });
+});
 
 // Serve uploads and static public assets
 app.use('/uploads', express.static(defaultUploadsDir));
@@ -725,12 +764,30 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
         return;
       }
 
-      const fileUrl = `/uploads/${req.file.filename}`;
+      const ext = path.extname(req.file.originalname).toLowerCase() || '.png';
+      const safeName = path.basename(req.file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
+      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e6)}`;
+      const filename = `${safeName}-${uniqueSuffix}${ext}`;
+      const fileUrl = `/uploads/${filename}`;
       const usage = req.body?.usage || 'general';
 
+      const dataUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+
+      // Write to disk caches where writable
+      for (const dir of [uploadsDir, defaultUploadsDir, tmpUploadsDir]) {
+        try {
+          if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+          fs.writeFileSync(path.join(dir, filename), req.file.buffer);
+        } catch {
+          // ignore disk cache write failure in read-only environments
+        }
+      }
+
       const savedAsset = Database.addMediaAsset({
-        filename: req.file.filename,
+        filename,
         url: fileUrl,
+        dataUrl,
+        mimeType: req.file.mimetype,
         originalName: req.file.originalname,
         size: req.file.size,
         usage,
@@ -739,7 +796,8 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
       res.json({
         success: true,
         fileUrl,
-        filename: req.file.filename,
+        dataUrl,
+        filename,
         originalName: req.file.originalname,
         size: req.file.size,
         mimeType: req.file.mimetype,

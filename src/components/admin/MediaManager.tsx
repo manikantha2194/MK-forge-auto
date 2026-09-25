@@ -516,6 +516,8 @@ export const MediaManager: React.FC = () => {
         throw new Error(`Failed to assign asset to ${slotTitle}`);
       }
 
+      const updatedProfile = await updateRes.json();
+
       // Also ensure slot-specific configs are updated if relevant
       if (slotKey === 'heroCharacter') {
         await apiFetch('/api/hero-config', {
@@ -538,14 +540,9 @@ export const MediaManager: React.FC = () => {
       }
 
       if (typeof window !== 'undefined') {
-        const storedProfile = localStorage.getItem('mk_persisted_profile');
-        if (storedProfile) {
-          try {
-            const p = JSON.parse(storedProfile);
-            p.media = { ...(p.media || {}), [slotKey]: url };
-            localStorage.setItem('mk_persisted_profile', JSON.stringify(p));
-          } catch { /* ignore */ }
-        }
+        try {
+          localStorage.setItem('mk_persisted_profile', JSON.stringify(updatedProfile));
+        } catch { /* ignore */ }
         if (slotKey === 'heroCharacter') {
           const storedHero = localStorage.getItem('mk_persisted_hero_config');
           if (storedHero) {
@@ -618,6 +615,8 @@ export const MediaManager: React.FC = () => {
         throw new Error('Failed to update brand media in profile.');
       }
 
+      const updatedProfile = await updateRes.json();
+
       // Also ensure slot-specific configs are updated if relevant
       if (slotKey === 'heroCharacter') {
         await apiFetch('/api/hero-config', {
@@ -640,14 +639,9 @@ export const MediaManager: React.FC = () => {
       }
 
       if (typeof window !== 'undefined') {
-        const storedProfile = localStorage.getItem('mk_persisted_profile');
-        if (storedProfile) {
-          try {
-            const p = JSON.parse(storedProfile);
-            p.media = { ...(p.media || {}), [slotKey]: newUrl };
-            localStorage.setItem('mk_persisted_profile', JSON.stringify(p));
-          } catch { /* ignore */ }
-        }
+        try {
+          localStorage.setItem('mk_persisted_profile', JSON.stringify(updatedProfile));
+        } catch { /* ignore */ }
         if (slotKey === 'heroCharacter') {
           const storedHero = localStorage.getItem('mk_persisted_hero_config');
           if (storedHero) {
@@ -707,6 +701,8 @@ export const MediaManager: React.FC = () => {
         throw new Error('Server returned an error resetting slot.');
       }
 
+      const updatedProfile = await res.json();
+
       // Also ensure slot-specific configs are updated if relevant
       if (slot.key === 'heroCharacter') {
         await apiFetch('/api/hero-config', {
@@ -729,14 +725,9 @@ export const MediaManager: React.FC = () => {
       }
 
       if (typeof window !== 'undefined') {
-        const storedProfile = localStorage.getItem('mk_persisted_profile');
-        if (storedProfile) {
-          try {
-            const p = JSON.parse(storedProfile);
-            p.media = { ...(p.media || {}), [slot.key]: slot.defaultUrl };
-            localStorage.setItem('mk_persisted_profile', JSON.stringify(p));
-          } catch { /* ignore */ }
-        }
+        try {
+          localStorage.setItem('mk_persisted_profile', JSON.stringify(updatedProfile));
+        } catch { /* ignore */ }
         if (slot.key === 'heroCharacter') {
           const storedHero = localStorage.getItem('mk_persisted_hero_config');
           if (storedHero) {

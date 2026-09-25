@@ -117,19 +117,10 @@ export const AboutManager: React.FC = () => {
 
     const success = await updateAboutConfig(form);
     if (form.profileImage) {
-      const currentMedia = profile?.media || {
-        heroCharacter: '/assets/hero-character.svg',
-        aboutPhoto: '/assets/about-manikantha.svg',
-        brandIcon: '/assets/mk-logo.svg',
-        brandBanner: '/assets/mk-forge-auto.svg',
-      };
       await updateProfile?.({
         media: {
-          heroCharacter: currentMedia.heroCharacter || '/assets/hero-character.svg',
           aboutPhoto: form.profileImage,
-          brandIcon: currentMedia.brandIcon || '/assets/mk-logo.svg',
-          brandBanner: currentMedia.brandBanner || '/assets/mk-forge-auto.svg',
-        },
+        } as any,
       });
     }
     setIsSaving(false);

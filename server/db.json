@@ -19,7 +19,7 @@
     "name": "Manikantha",
     "brandName": "forge_auto",
     "shortGreeting": "HI, I'M MANI",
-    "mainHeadline": "FREELANCER",
+    "mainHeadline": "NEW HEADING",
     "subHeadline": "AI/ML • WEB DESIGNER • CONTENT CREATOR",
     "tagline": "Turning Ideas into Digital Reality",
     "badges": [
@@ -570,7 +570,7 @@
     }
   ],
   "heroConfig": {
-    "heading": "FREELANCER",
+    "heading": "NEW HEADING",
     "subtitle": "AI/ML • WEB DESIGNER • CONTENT CREATOR",
     "description": "Architecting intelligent algorithms, cinematic motion, and high-performance digital platforms with futuristic precision.",
     "profileImage": "/uploads/test-circle-1790330475284-239856.svg",

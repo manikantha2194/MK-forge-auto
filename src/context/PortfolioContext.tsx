@@ -82,7 +82,15 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [profile, setProfile] = useState<ProfileConfig | null>(() => {
     try {
       const stored = localStorage.getItem('mk_persisted_profile');
-      return stored ? JSON.parse(stored) : null;
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Cleanse any old dead production upload URL if it was cached
+        if (parsed?.media?.brandIcon && parsed.media.brandIcon.includes('brand-1790331261862-940990')) {
+          delete parsed.media.brandIcon;
+        }
+        return parsed;
+      }
+      return null;
     } catch {
       return null;
     }
@@ -122,26 +130,12 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const res = await apiFetch('/api/profile');
       if (res.ok) {
         const data = await res.json();
-        const stored = localStorage.getItem('mk_persisted_profile');
-        let merged = data;
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored);
-            if (parsed.media) {
-              merged = {
-                ...data,
-                media: {
-                  ...data.media,
-                  ...parsed.media,
-                },
-              };
-            }
-          } catch {
-            // ignore parse error
-          }
+        setProfile(data);
+        try {
+          localStorage.setItem('mk_persisted_profile', JSON.stringify(data));
+        } catch {
+          // ignore
         }
-        setProfile(merged);
-        localStorage.setItem('mk_persisted_profile', JSON.stringify(merged));
       }
     } catch (e) {
       console.error('Failed to fetch profile', e);
@@ -225,20 +219,12 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const res = await apiFetch('/api/hero-config');
       if (res.ok) {
         const data = await res.json();
-        const stored = localStorage.getItem('mk_persisted_hero_config');
-        let merged = data;
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored);
-            if (parsed.profileImage) {
-              merged = { ...data, profileImage: parsed.profileImage };
-            }
-          } catch {
-            // ignore
-          }
+        setHeroConfig(data);
+        try {
+          localStorage.setItem('mk_persisted_hero_config', JSON.stringify(data));
+        } catch {
+          // ignore
         }
-        setHeroConfig(merged);
-        localStorage.setItem('mk_persisted_hero_config', JSON.stringify(merged));
       }
     } catch (e) {
       console.error('Failed to fetch hero config', e);
@@ -250,20 +236,12 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const res = await apiFetch('/api/about-config');
       if (res.ok) {
         const data = await res.json();
-        const stored = localStorage.getItem('mk_persisted_about_config');
-        let merged = data;
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored);
-            if (parsed.profileImage) {
-              merged = { ...data, profileImage: parsed.profileImage };
-            }
-          } catch {
-            // ignore
-          }
+        setAboutConfig(data);
+        try {
+          localStorage.setItem('mk_persisted_about_config', JSON.stringify(data));
+        } catch {
+          // ignore
         }
-        setAboutConfig(merged);
-        localStorage.setItem('mk_persisted_about_config', JSON.stringify(merged));
       }
     } catch (e) {
       console.error('Failed to fetch about config', e);
@@ -339,6 +317,35 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     fetchAppearance,
     fetchHomeBackground,
   ]);
+
+  // Dynamically synchronize the browser tab favicon with Brand Monogram
+  useEffect(() => {
+    const brandIconUrl = profile?.media?.brandIcon || '/assets/mk-logo.svg';
+    if (!brandIconUrl || typeof document === 'undefined') return;
+
+    let link = (document.getElementById('brand-favicon') ||
+      document.querySelector("link[rel~='icon']")) as HTMLLinkElement | null;
+
+    if (!link) {
+      link = document.createElement('link');
+      link.id = 'brand-favicon';
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+
+    if (link.getAttribute('href') !== brandIconUrl) {
+      link.href = brandIconUrl;
+      if (brandIconUrl.endsWith('.svg') || brandIconUrl.startsWith('data:image/svg+xml')) {
+        link.type = 'image/svg+xml';
+      } else if (brandIconUrl.endsWith('.png') || brandIconUrl.startsWith('data:image/png')) {
+        link.type = 'image/png';
+      } else if (brandIconUrl.endsWith('.ico') || brandIconUrl.startsWith('data:image/x-icon')) {
+        link.type = 'image/x-icon';
+      } else if (brandIconUrl.endsWith('.webp')) {
+        link.type = 'image/webp';
+      }
+    }
+  }, [profile?.media?.brandIcon]);
 
   const getAuthHeaders = (extra: Record<string, string> = {}): Record<string, string> => {
     const token = localStorage.getItem('mk_auth_token');

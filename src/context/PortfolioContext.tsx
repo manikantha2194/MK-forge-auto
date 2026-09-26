@@ -83,12 +83,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       const stored = localStorage.getItem('mk_persisted_profile');
       if (stored) {
-        const parsed = JSON.parse(stored);
-        // Cleanse any old dead production upload URL if it was cached
-        if (parsed?.media?.brandIcon && parsed.media.brandIcon.includes('brand-1790331261862-940990')) {
-          delete parsed.media.brandIcon;
-        }
-        return parsed;
+        return JSON.parse(stored);
       }
       return null;
     } catch {

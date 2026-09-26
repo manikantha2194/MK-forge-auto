@@ -83,16 +83,22 @@ export class Database {
       return this.cachedData;
     }
 
+    // Priority 1: Check DEFAULT_DB_PATH if it exists
+    if (fs.existsSync(DEFAULT_DB_PATH)) {
+      try {
+        const raw = fs.readFileSync(DEFAULT_DB_PATH, 'utf-8');
+        this.cachedData = JSON.parse(raw) as DatabaseSchema;
+        return this.cachedData;
+      } catch (err) {
+        console.warn('[DB] Error loading DEFAULT_DB_PATH:', err);
+      }
+    }
+
+    // Priority 2: Check working active path (e.g. /tmp/db.json in serverless)
     try {
       const activePath = this.getWorkingDbPath();
       if (fs.existsSync(activePath)) {
         const raw = fs.readFileSync(activePath, 'utf-8');
-        this.cachedData = JSON.parse(raw) as DatabaseSchema;
-        return this.cachedData;
-      }
-
-      if (fs.existsSync(DEFAULT_DB_PATH)) {
-        const raw = fs.readFileSync(DEFAULT_DB_PATH, 'utf-8');
         this.cachedData = JSON.parse(raw) as DatabaseSchema;
         return this.cachedData;
       }
@@ -115,19 +121,30 @@ export class Database {
   private static save(data: DatabaseSchema): void {
     this.cachedData = data;
     const targetPath = this.getWorkingDbPath();
+    const jsonStr = JSON.stringify(data, null, 2);
+
     try {
       const tempPath = `${targetPath}.tmp`;
-      fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf-8');
-      fs.renameSync(tempPath, targetPath);
+      fs.writeFileSync(tempPath, jsonStr, 'utf-8');
+      try {
+        fs.renameSync(tempPath, targetPath);
+      } catch {
+        fs.writeFileSync(targetPath, jsonStr, 'utf-8');
+        try { fs.unlinkSync(tempPath); } catch { /* ignore */ }
+      }
     } catch (err) {
-      console.warn('[DB] Warning saving database to disk (keeping in-memory state):', err);
+      try {
+        fs.writeFileSync(targetPath, jsonStr, 'utf-8');
+      } catch (e) {
+        console.warn('[DB] Warning saving database to disk (keeping in-memory state):', e || err);
+      }
     }
 
     // Also attempt persisting to DEFAULT_DB_PATH if writable and not already written
     if (targetPath !== DEFAULT_DB_PATH) {
       try {
         if (fs.existsSync(DEFAULT_DB_PATH)) {
-          fs.writeFileSync(DEFAULT_DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+          fs.writeFileSync(DEFAULT_DB_PATH, jsonStr, 'utf-8');
         }
       } catch {
         // ignore read-only fs
@@ -137,7 +154,7 @@ export class Database {
     // Ensure /tmp/db.json is also kept in sync if writable
     if (targetPath !== TMP_DB_PATH) {
       try {
-        fs.writeFileSync(TMP_DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+        fs.writeFileSync(TMP_DB_PATH, jsonStr, 'utf-8');
       } catch {
         // ignore
       }
@@ -716,7 +733,7 @@ export class Database {
     if (updates.badgeText) data.profile.shortGreeting = updates.badgeText;
     if (updates.description) data.profile.tagline = updates.description;
     if (updates.profileImage) {
-      if (!data.profile.media) data.profile.media = {} as any;
+      if (!data.profile.media) data.profile.media = { ...this.getProfile().media };
       data.profile.media.heroCharacter = updates.profileImage;
     }
     this.save(data);
@@ -768,7 +785,7 @@ export class Database {
       },
     };
     if (updates.profileImage) {
-      if (!data.profile.media) data.profile.media = {} as any;
+      if (!data.profile.media) data.profile.media = { ...this.getProfile().media };
       data.profile.media.aboutPhoto = updates.profileImage;
     }
     if (updates.longDescription) data.profile.aboutBio = updates.longDescription;
@@ -1113,12 +1130,14 @@ export class Database {
   // ==========================================
   public static getMediaAssetByFilename(filename: string): MediaAssetItem | undefined {
     const data = this.load();
-    const safe = path.basename(filename);
+    const safe = path.basename(decodeURIComponent(filename).split('?')[0]);
     return (data.mediaAssets || []).find(
       a => a.filename === safe ||
+           a.filename === filename ||
            a.url === `/uploads/${safe}` ||
            a.url === `/api/uploads/${safe}` ||
-           a.url.endsWith(`/${safe}`)
+           a.url.endsWith(`/${safe}`) ||
+           a.originalName === safe
     );
   }
 
@@ -1255,12 +1274,12 @@ export class Database {
 
     // If usage was set to home-character or about, synchronize profile and hero/about configs!
     if (updates.usage === 'home-character') {
-      if (!data.profile.media) data.profile.media = {} as any;
+      if (!data.profile.media) data.profile.media = { ...this.getProfile().media };
       data.profile.media.heroCharacter = assets[idx].url;
       if (!data.heroConfig) data.heroConfig = this.getHeroConfig();
       data.heroConfig.profileImage = assets[idx].url;
     } else if (updates.usage === 'about') {
-      if (!data.profile.media) data.profile.media = {} as any;
+      if (!data.profile.media) data.profile.media = { ...this.getProfile().media };
       data.profile.media.aboutPhoto = assets[idx].url;
       if (!data.aboutConfig) data.aboutConfig = this.getAboutConfig();
       data.aboutConfig.profileImage = assets[idx].url;

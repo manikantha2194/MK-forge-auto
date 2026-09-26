@@ -14,6 +14,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'manikantha-portfolio-jwt-secret-ke
 // Ensure uploads directory exists (support both local project dir and /tmp for serverless/Vercel)
 const defaultUploadsDir = path.join(process.cwd(), 'public', 'uploads');
 const tmpUploadsDir = path.join('/tmp', 'uploads');
+const distUploadsDir = path.join(process.cwd(), 'dist', 'uploads');
 
 let uploadsDir = defaultUploadsDir;
 try {
@@ -198,10 +199,10 @@ app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 // Dedicated Media Delivery Handler (supports disk cache + database dataUrl fallback + mime types)
 app.get(['/uploads/:filename', '/api/uploads/:filename'], (req: Request, res: Response) => {
   const rawParam = req.params.filename || '';
-  const cleanFilename = path.basename(rawParam.split('?')[0]);
+  const cleanFilename = path.basename(decodeURIComponent(rawParam).split('?')[0]);
 
   // 1. Try serving from local disk first
-  const candidateDirs = [uploadsDir, defaultUploadsDir, tmpUploadsDir];
+  const candidateDirs = [uploadsDir, defaultUploadsDir, tmpUploadsDir, distUploadsDir];
   for (const dir of candidateDirs) {
     const filePath = path.join(dir, cleanFilename);
     if (fs.existsSync(filePath)) {
@@ -223,30 +224,20 @@ app.get(['/uploads/:filename', '/api/uploads/:filename'], (req: Request, res: Re
       const mimeType = match[1];
       const buffer = Buffer.from(match[2], 'base64');
       
-      // Cache to /tmp/uploads on this container for next requests
-      try {
-        if (!fs.existsSync(tmpUploadsDir)) fs.mkdirSync(tmpUploadsDir, { recursive: true });
-        fs.writeFileSync(path.join(tmpUploadsDir, cleanFilename), buffer);
-      } catch {
-        // ignore cache write error
+      // Cache to candidate dirs on this container for next requests
+      for (const dir of [tmpUploadsDir, uploadsDir]) {
+        try {
+          if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+          fs.writeFileSync(path.join(dir, cleanFilename), buffer);
+        } catch {
+          // ignore cache write error
+        }
       }
 
       res.setHeader('Content-Type', mimeType);
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
       return res.send(buffer);
     }
-  }
-
-  // 3. Fallback for known asset naming conventions
-  if (cleanFilename.includes('char') || cleanFilename.includes('hero')) {
-    const fallbackPath = path.join(process.cwd(), 'public', 'assets', 'hero-character.svg');
-    if (fs.existsSync(fallbackPath)) return res.sendFile(fallbackPath);
-  } else if (cleanFilename.includes('about') || cleanFilename.includes('photo') || cleanFilename.includes('image')) {
-    const fallbackPath = path.join(process.cwd(), 'public', 'assets', 'about-manikantha.svg');
-    if (fs.existsSync(fallbackPath)) return res.sendFile(fallbackPath);
-  } else if (cleanFilename.includes('brand') || cleanFilename.includes('logo') || cleanFilename.includes('icon')) {
-    const fallbackPath = path.join(process.cwd(), 'public', 'assets', 'mk-logo.svg');
-    if (fs.existsSync(fallbackPath)) return res.sendFile(fallbackPath);
   }
 
   res.status(404).json({ error: 'Media file not found' });
@@ -774,7 +765,7 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
       const dataUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
 
       // Write to disk caches where writable
-      for (const dir of [uploadsDir, defaultUploadsDir, tmpUploadsDir]) {
+      for (const dir of [uploadsDir, defaultUploadsDir, tmpUploadsDir, distUploadsDir]) {
         try {
           if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
           fs.writeFileSync(path.join(dir, filename), req.file.buffer);

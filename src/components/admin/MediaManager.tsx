@@ -567,7 +567,6 @@ export const MediaManager: React.FC = () => {
         refreshProfile(),
         refreshHeroConfig(),
         refreshAboutConfig(),
-        refreshAll?.(),
       ]);
       setSuccessMessage(`Assigned asset to "${slotTitle}" successfully!`);
     } catch (err: unknown) {
@@ -665,7 +664,6 @@ export const MediaManager: React.FC = () => {
         refreshProfile(),
         refreshHeroConfig(),
         refreshAboutConfig(),
-        refreshAll?.(),
         loadMediaAssets(),
       ]);
       setSuccessMessage(`Updated "${slotKey}" media asset successfully!`);
@@ -750,7 +748,6 @@ export const MediaManager: React.FC = () => {
         refreshProfile(),
         refreshHeroConfig(),
         refreshAboutConfig(),
-        refreshAll?.(),
       ]);
       setConfirmResetSlot(null);
       setSuccessMessage(`Reverted "${slot.title}" to default artwork.`);

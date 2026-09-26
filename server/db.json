@@ -43,10 +43,10 @@
       "email": "manimoram143@gmail.com"
     },
     "media": {
-      "heroCharacter": "/assets/hero-character.svg",
-      "aboutPhoto": "/assets/about-manikantha.svg",
-      "brandIcon": "/assets/mk-logo.svg",
-      "brandBanner": "/assets/mk-forge-auto.svg"
+      "heroCharacter": "/uploads/asset-A-1790426643287-522252.svg",
+      "aboutPhoto": "/uploads/asset-B-1790426643298-538900.svg",
+      "brandIcon": "/uploads/asset-C-1790426643307-96297.svg",
+      "brandBanner": "/uploads/asset-D-1790426643317-876867.svg"
     }
   },
   "stats": [
@@ -573,7 +573,7 @@
     "heading": "FREELANCER",
     "subtitle": "AI/ML • WEB DESIGNER • CONTENT CREATOR",
     "description": "Architecting intelligent algorithms, cinematic motion, and high-performance digital platforms with futuristic precision.",
-    "profileImage": "/assets/hero-character.svg",
+    "profileImage": "/uploads/asset-A-1790426643287-522252.svg",
     "primaryBtnText": "Hire Me",
     "primaryBtnUrl": "#contact",
     "secondaryBtnText": "Explore Portfolio",
@@ -593,7 +593,7 @@
   "aboutConfig": {
     "heading": "Engineering Code & Visual Craft",
     "subheading": "BRIDGING INTELLIGENCE, SYSTEMS & MEDIA",
-    "profileImage": "/assets/about-manikantha.svg",
+    "profileImage": "/uploads/asset-B-1790426643298-538900.svg",
     "shortIntro": "Bridging Artificial Intelligence, Modern Web Systems & Cinematic Media",
     "longDescription": [
       "I am an enthusiastic AI/ML learner & developer, creative web designer, and digital content creator driven by the pursuit of futuristic technology and aesthetic precision.",
@@ -813,6 +813,54 @@
     ]
   },
   "mediaAssets": [
+    {
+      "id": "media-1790426643317-4v806",
+      "filename": "asset-D-1790426643317-876867.svg",
+      "url": "/uploads/asset-D-1790426643317-876867.svg",
+      "dataUrl": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjRkYwMEZGIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iODAiIGZpbGw9IiNmZmYiPkQ8L3RleHQ+PC9zdmc+",
+      "mimeType": "image/svg+xml",
+      "originalName": "asset-D.svg",
+      "name": "asset D",
+      "size": 225,
+      "createdAt": "2026-09-26T12:44:03.317Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1790426643308-iwny5",
+      "filename": "asset-C-1790426643307-96297.svg",
+      "url": "/uploads/asset-C-1790426643307-96297.svg",
+      "dataUrl": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDAwMEZGIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iODAiIGZpbGw9IiNmZmYiPkM8L3RleHQ+PC9zdmc+",
+      "mimeType": "image/svg+xml",
+      "originalName": "asset-C.svg",
+      "name": "asset C",
+      "size": 225,
+      "createdAt": "2026-09-26T12:44:03.308Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1790426643298-jrqgr",
+      "filename": "asset-B-1790426643298-538900.svg",
+      "url": "/uploads/asset-B-1790426643298-538900.svg",
+      "dataUrl": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDBGRjAwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iODAiIGZpbGw9IiNmZmYiPkI8L3RleHQ+PC9zdmc+",
+      "mimeType": "image/svg+xml",
+      "originalName": "asset-B.svg",
+      "name": "asset B",
+      "size": 225,
+      "createdAt": "2026-09-26T12:44:03.298Z",
+      "usage": "about"
+    },
+    {
+      "id": "media-1790426643288-1mmzx",
+      "filename": "asset-A-1790426643287-522252.svg",
+      "url": "/uploads/asset-A-1790426643287-522252.svg",
+      "dataUrl": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjRkYwMDAwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iODAiIGZpbGw9IiNmZmYiPkE8L3RleHQ+PC9zdmc+",
+      "mimeType": "image/svg+xml",
+      "originalName": "asset-A.svg",
+      "name": "asset A",
+      "size": 225,
+      "createdAt": "2026-09-26T12:44:03.288Z",
+      "usage": "home-character"
+    },
     {
       "id": "media-1790156778919-f3qjo",
       "filename": "test-char-1790156778912-713222.svg",

@@ -55,19 +55,27 @@ export class Database {
   private static cachedData: DatabaseSchema | null = null;
 
   private static getWorkingDbPath(): string {
-    if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
-      if (!fs.existsSync(TMP_DB_PATH)) {
-        try {
-          if (fs.existsSync(DEFAULT_DB_PATH)) {
-            fs.copyFileSync(DEFAULT_DB_PATH, TMP_DB_PATH);
-          }
-        } catch (e) {
-          console.warn('[DB] Could not copy db.json to /tmp:', e);
-        }
+    // 1. If DEFAULT_DB_PATH exists and is writable, ALWAYS use it as the source of truth
+    try {
+      if (fs.existsSync(DEFAULT_DB_PATH)) {
+        fs.accessSync(DEFAULT_DB_PATH, fs.constants.R_OK | fs.constants.W_OK);
+        return DEFAULT_DB_PATH;
       }
-      return TMP_DB_PATH;
+    } catch {
+      // DEFAULT_DB_PATH is not writable (e.g. read-only environment like Vercel lambda)
     }
-    return DEFAULT_DB_PATH;
+
+    // 2. In serverless / read-only filesystem environments, fall back to /tmp/db.json
+    if (!fs.existsSync(TMP_DB_PATH)) {
+      try {
+        if (fs.existsSync(DEFAULT_DB_PATH)) {
+          fs.copyFileSync(DEFAULT_DB_PATH, TMP_DB_PATH);
+        }
+      } catch (e) {
+        console.warn('[DB] Could not copy db.json to /tmp:', e);
+      }
+    }
+    return TMP_DB_PATH;
   }
 
   private static load(): DatabaseSchema {
@@ -106,8 +114,8 @@ export class Database {
 
   private static save(data: DatabaseSchema): void {
     this.cachedData = data;
+    const targetPath = this.getWorkingDbPath();
     try {
-      const targetPath = this.getWorkingDbPath();
       const tempPath = `${targetPath}.tmp`;
       fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf-8');
       fs.renameSync(tempPath, targetPath);
@@ -115,22 +123,24 @@ export class Database {
       console.warn('[DB] Warning saving database to disk (keeping in-memory state):', err);
     }
 
-    // Ensure /tmp/db.json is also updated for warm lambda invocations
-    try {
-      if (TMP_DB_PATH) {
-        fs.writeFileSync(TMP_DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+    // Also attempt persisting to DEFAULT_DB_PATH if writable and not already written
+    if (targetPath !== DEFAULT_DB_PATH) {
+      try {
+        if (fs.existsSync(DEFAULT_DB_PATH)) {
+          fs.writeFileSync(DEFAULT_DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+        }
+      } catch {
+        // ignore read-only fs
       }
-    } catch {
-      // In-memory cache is maintained
     }
 
-    // Also attempt persisting to DEFAULT_DB_PATH if writable
-    try {
-      if (fs.existsSync(DEFAULT_DB_PATH) && DEFAULT_DB_PATH !== TMP_DB_PATH) {
-        fs.writeFileSync(DEFAULT_DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+    // Ensure /tmp/db.json is also kept in sync if writable
+    if (targetPath !== TMP_DB_PATH) {
+      try {
+        fs.writeFileSync(TMP_DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore read-only fs
     }
   }
 
@@ -179,6 +189,31 @@ export class Database {
 
   public static updateProfile(newProfile: Partial<ProfileConfig>): ProfileConfig {
     const data = this.load();
+
+    const currentMedia = data.profile?.media || {
+      heroCharacter: '/assets/hero-character.svg',
+      aboutPhoto: '/assets/about-manikantha.svg',
+      brandIcon: '/assets/mk-logo.svg',
+      brandBanner: '/assets/mk-forge-auto.svg',
+    };
+
+    // Update only the media slots that are explicitly provided in newProfile.media
+    const updatedMedia = { ...currentMedia };
+    if (newProfile.media) {
+      if (newProfile.media.heroCharacter !== undefined) {
+        updatedMedia.heroCharacter = newProfile.media.heroCharacter;
+      }
+      if (newProfile.media.aboutPhoto !== undefined) {
+        updatedMedia.aboutPhoto = newProfile.media.aboutPhoto;
+      }
+      if (newProfile.media.brandIcon !== undefined) {
+        updatedMedia.brandIcon = newProfile.media.brandIcon;
+      }
+      if (newProfile.media.brandBanner !== undefined) {
+        updatedMedia.brandBanner = newProfile.media.brandBanner;
+      }
+    }
+
     data.profile = {
       ...data.profile,
       ...newProfile,
@@ -186,18 +221,15 @@ export class Database {
         ...data.profile.socials,
         ...(newProfile.socials || {})
       },
-      media: {
-        ...data.profile.media,
-        ...(newProfile.media || {})
-      }
+      media: updatedMedia
     };
 
-    // Synchronize heroConfig and aboutConfig when media changes!
-    if (newProfile.media?.heroCharacter) {
+    // Synchronize heroConfig and aboutConfig only when that specific slot changed
+    if (newProfile.media?.heroCharacter !== undefined) {
       if (!data.heroConfig) data.heroConfig = this.getHeroConfig();
       data.heroConfig.profileImage = newProfile.media.heroCharacter;
     }
-    if (newProfile.media?.aboutPhoto) {
+    if (newProfile.media?.aboutPhoto !== undefined) {
       if (!data.aboutConfig) data.aboutConfig = this.getAboutConfig();
       data.aboutConfig.profileImage = newProfile.media.aboutPhoto;
     }

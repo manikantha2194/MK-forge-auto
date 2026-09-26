@@ -506,7 +506,6 @@ export const MediaManager: React.FC = () => {
         },
         body: JSON.stringify({
           media: {
-            ...profile?.media,
             [slotKey]: url,
           },
         }),
@@ -605,7 +604,6 @@ export const MediaManager: React.FC = () => {
         },
         body: JSON.stringify({
           media: {
-            ...profile?.media,
             [slotKey]: newUrl,
           },
         }),
@@ -691,7 +689,6 @@ export const MediaManager: React.FC = () => {
         },
         body: JSON.stringify({
           media: {
-            ...profile?.media,
             [slot.key]: slot.defaultUrl,
           },
         }),

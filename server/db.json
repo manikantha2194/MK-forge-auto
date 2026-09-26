@@ -19,7 +19,7 @@
     "name": "Manikantha",
     "brandName": "forge_auto",
     "shortGreeting": "HI, I'M MANI",
-    "mainHeadline": "NEW HEADING",
+    "mainHeadline": "FREELANCER",
     "subHeadline": "AI/ML • WEB DESIGNER • CONTENT CREATOR",
     "tagline": "Turning Ideas into Digital Reality",
     "badges": [
@@ -570,10 +570,10 @@
     }
   ],
   "heroConfig": {
-    "heading": "NEW HEADING",
+    "heading": "FREELANCER",
     "subtitle": "AI/ML • WEB DESIGNER • CONTENT CREATOR",
     "description": "Architecting intelligent algorithms, cinematic motion, and high-performance digital platforms with futuristic precision.",
-    "profileImage": "/uploads/test-circle-1790330475284-239856.svg",
+    "profileImage": "/assets/hero-character.svg",
     "primaryBtnText": "Hire Me",
     "primaryBtnUrl": "#contact",
     "secondaryBtnText": "Explore Portfolio",
@@ -593,7 +593,7 @@
   "aboutConfig": {
     "heading": "Engineering Code & Visual Craft",
     "subheading": "BRIDGING INTELLIGENCE, SYSTEMS & MEDIA",
-    "profileImage": "/uploads/test-circle-1790330475284-239856.svg",
+    "profileImage": "/assets/about-manikantha.svg",
     "shortIntro": "Bridging Artificial Intelligence, Modern Web Systems & Cinematic Media",
     "longDescription": [
       "I am an enthusiastic AI/ML learner & developer, creative web designer, and digital content creator driven by the pursuit of futuristic technology and aesthetic precision.",

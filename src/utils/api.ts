@@ -57,6 +57,7 @@ export async function apiFetch(path: string, init?: RequestInit): Promise<Respon
  */
 export function resolveMediaUrl(url?: string | null): string {
   if (!url) return '';
+  
   if (
     url.startsWith('http://') ||
     url.startsWith('https://') ||
@@ -74,5 +75,15 @@ export function resolveMediaUrl(url?: string | null): string {
     return url;
   }
 
-  return url;
+  const cleanPath = url.startsWith('/') ? url : `/${url}`;
+
+  if (cleanPath.startsWith('/uploads/')) {
+    return `/api${cleanPath}`;
+  }
+
+  if (cleanPath.startsWith('/assets/')) {
+    return cleanPath;
+  }
+
+  return cleanPath;
 }

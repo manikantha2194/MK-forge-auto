@@ -3,6 +3,11 @@
   "outputDirectory": "dist",
   "routes": [
     {
+      "src": "/api/auth/login",
+      "methods": ["POST"],
+      "dest": "/dist/server.cjs"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/dist/server.cjs"
     },

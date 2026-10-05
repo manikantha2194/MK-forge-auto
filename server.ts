@@ -156,14 +156,17 @@ export const app = express();
 
 // Path normalization for serverless function rewrites
 app.use((req: Request, _res: Response, next: NextFunction) => {
-  const original = (req.headers['x-forwarded-uri'] as string) || req.originalUrl || req.url;
-  if (original) {
-    if (original.startsWith('/uploads') || original.startsWith('/assets') || original.startsWith('/api')) {
-      req.url = original;
-    } else if (!req.url.startsWith('/api') && !req.url.startsWith('/uploads') && !req.url.startsWith('/assets')) {
-      const prefix = req.url.startsWith('/') ? '' : '/';
-      req.url = `/api${prefix}${req.url}`;
-    }
+  const matched = (
+    (req.headers['x-matched-path'] as string) ||
+    (req.headers['x-invoke-path'] as string) ||
+    (req.headers['x-forwarded-uri'] as string) ||
+    (req.headers['x-original-url'] as string) ||
+    req.originalUrl ||
+    req.url
+  );
+
+  if (matched && (matched.startsWith('/api') || matched.startsWith('/uploads') || matched.startsWith('/assets'))) {
+    req.url = matched;
   }
   next();
 });

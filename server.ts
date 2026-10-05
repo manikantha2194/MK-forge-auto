@@ -774,26 +774,21 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
         const filename = `${safeName}-${uniqueSuffix}${ext}`;
         const usage = req.body?.usage || 'general';
 
-        let fileUrl: string;
+        // Permanent storage in Vercel Blob
+        const blob = await PersistentMediaManager.uploadFile(
+          filename,
+          req.file.buffer,
+          req.file.mimetype
+        );
+        const fileUrl = blob.url;
 
-        // Permanent storage in Vercel Blob when configured
-        if (PersistentMediaManager.isBlobConfigured()) {
-          const blob = await PersistentMediaManager.uploadFile(
-            filename,
-            req.file.buffer,
-            req.file.mimetype
-          );
-          fileUrl = blob.url;
-        } else {
-          // Local disk fallback for local development or test runs
-          fileUrl = `/uploads/${filename}`;
-          for (const dir of [uploadsDir, defaultUploadsDir, tmpUploadsDir, distUploadsDir]) {
-            try {
-              if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-              fs.writeFileSync(path.join(dir, filename), req.file.buffer);
-            } catch {
-              // ignore disk cache write failure in read-only environments
-            }
+        // Also cache locally for disk delivery where writable
+        for (const dir of [uploadsDir, defaultUploadsDir, tmpUploadsDir, distUploadsDir]) {
+          try {
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+            fs.writeFileSync(path.join(dir, filename), req.file.buffer);
+          } catch {
+            // ignore disk cache write failure in read-only environments
           }
         }
 

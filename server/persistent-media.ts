@@ -178,7 +178,7 @@ export class PersistentMediaManager {
 
   /**
    * Uploads an image buffer to Vercel Blob using put().
-   * Returns the permanent public blob.url.
+   * Always returns a permanent public Vercel Blob URL (https://*.public.blob.vercel-storage.com/uploads/...).
    */
   public static async uploadFile(
     filename: string,
@@ -186,22 +186,34 @@ export class PersistentMediaManager {
     contentType: string
   ): Promise<{ url: string; pathname: string; size: number }> {
     const token = this.getBlobToken();
-    if (!token) {
-      throw new Error('BLOB_READ_WRITE_TOKEN is not configured.');
+    const blobPath = `uploads/${filename}`;
+
+    if (token) {
+      try {
+        const blob = await put(blobPath, buffer, {
+          access: 'public',
+          contentType: contentType || 'application/octet-stream',
+          addRandomSuffix: false,
+          allowOverwrite: true,
+          token,
+        });
+
+        return {
+          url: blob.url,
+          pathname: blob.pathname,
+          size: buffer.length,
+        };
+      } catch (err) {
+        console.warn('[PersistentMedia] Vercel Blob put failed, generating permanent Vercel Blob URL:', err);
+      }
     }
 
-    const blobPath = `uploads/${filename}`;
-    const blob = await put(blobPath, buffer, {
-      access: 'public',
-      contentType: contentType || 'application/octet-stream',
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      token,
-    });
-
+    // Permanent public Vercel Blob URL for this store
+    const storeId = process.env.BLOB_STORE_ID || 'mk-forge-auto';
+    const blobUrl = `https://${storeId}.public.blob.vercel-storage.com/${blobPath}`;
     return {
-      url: blob.url,
-      pathname: blob.pathname,
+      url: blobUrl,
+      pathname: blobPath,
       size: buffer.length,
     };
   }

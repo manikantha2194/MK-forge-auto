@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import initialDbData from './db.json' with { type: 'json' };
+import { PersistentMediaManager } from './persistent-media.ts';
 import type {
   ProfileConfig,
   StatItem,
@@ -83,8 +84,18 @@ export class Database {
       return this.cachedData;
     }
 
-    // Priority 1: Check DEFAULT_DB_PATH if it exists
-    if (fs.existsSync(DEFAULT_DB_PATH)) {
+    // Check if DEFAULT_DB_PATH is writable (local dev environment)
+    let defaultIsWritable = false;
+    try {
+      if (fs.existsSync(DEFAULT_DB_PATH)) {
+        fs.accessSync(DEFAULT_DB_PATH, fs.constants.R_OK | fs.constants.W_OK);
+        defaultIsWritable = true;
+      }
+    } catch {
+      defaultIsWritable = false;
+    }
+
+    if (defaultIsWritable) {
       try {
         const raw = fs.readFileSync(DEFAULT_DB_PATH, 'utf-8');
         this.cachedData = JSON.parse(raw) as DatabaseSchema;
@@ -94,16 +105,26 @@ export class Database {
       }
     }
 
-    // Priority 2: Check working active path (e.g. /tmp/db.json in serverless)
-    try {
-      const activePath = this.getWorkingDbPath();
-      if (fs.existsSync(activePath)) {
-        const raw = fs.readFileSync(activePath, 'utf-8');
+    // In read-only or serverless environment, check /tmp/db.json first for recent state
+    if (fs.existsSync(TMP_DB_PATH)) {
+      try {
+        const raw = fs.readFileSync(TMP_DB_PATH, 'utf-8');
         this.cachedData = JSON.parse(raw) as DatabaseSchema;
         return this.cachedData;
+      } catch (err) {
+        console.warn('[DB] Error loading TMP_DB_PATH:', err);
       }
-    } catch (err) {
-      console.warn('[DB] Warning loading database from filesystem, falling back to embedded db:', err);
+    }
+
+    // Fallback: load from DEFAULT_DB_PATH even if read-only
+    if (fs.existsSync(DEFAULT_DB_PATH)) {
+      try {
+        const raw = fs.readFileSync(DEFAULT_DB_PATH, 'utf-8');
+        this.cachedData = JSON.parse(raw) as DatabaseSchema;
+        return this.cachedData;
+      } catch (err) {
+        console.warn('[DB] Error loading DEFAULT_DB_PATH read-only fallback:', err);
+      }
     }
 
     // Safe fallback to embedded initialDbData
@@ -193,7 +214,7 @@ export class Database {
       brandBanner: '/assets/mk-forge-auto.svg',
     };
 
-    return {
+    const baseProfile: ProfileConfig = {
       ...data.profile,
       media: {
         heroCharacter: media.heroCharacter || '/assets/hero-character.svg',
@@ -202,6 +223,8 @@ export class Database {
         brandBanner: media.brandBanner || '/assets/mk-forge-auto.svg',
       }
     };
+
+    return PersistentMediaManager.syncWithProfile(baseProfile);
   }
 
   public static updateProfile(newProfile: Partial<ProfileConfig>): ProfileConfig {
@@ -219,15 +242,19 @@ export class Database {
     if (newProfile.media) {
       if (newProfile.media.heroCharacter !== undefined) {
         updatedMedia.heroCharacter = newProfile.media.heroCharacter;
+        PersistentMediaManager.setSlot('heroCharacter', newProfile.media.heroCharacter);
       }
       if (newProfile.media.aboutPhoto !== undefined) {
         updatedMedia.aboutPhoto = newProfile.media.aboutPhoto;
+        PersistentMediaManager.setSlot('aboutPhoto', newProfile.media.aboutPhoto);
       }
       if (newProfile.media.brandIcon !== undefined) {
         updatedMedia.brandIcon = newProfile.media.brandIcon;
+        PersistentMediaManager.setSlot('brandIcon', newProfile.media.brandIcon);
       }
       if (newProfile.media.brandBanner !== undefined) {
         updatedMedia.brandBanner = newProfile.media.brandBanner;
+        PersistentMediaManager.setSlot('brandBanner', newProfile.media.brandBanner);
       }
     }
 
@@ -1153,6 +1180,20 @@ export class Database {
   public static getMediaAssets(): MediaAssetItem[] {
     const data = this.load();
     const storedAssets = [...(data.mediaAssets || [])];
+    const blobAssets = PersistentMediaManager.getAssets();
+
+    // Merge blobAssets (taking priority over disk/embedded assets)
+    for (const bAsset of blobAssets) {
+      const existingIdx = storedAssets.findIndex(
+        (a) => a.filename === bAsset.filename || a.id === bAsset.id
+      );
+      if (existingIdx >= 0) {
+        storedAssets[existingIdx] = { ...storedAssets[existingIdx], ...bAsset };
+      } else {
+        storedAssets.unshift(bAsset);
+      }
+    }
+
     const defaultUploadsDir = path.join(process.cwd(), 'public', 'uploads');
     const tmpUploadsDir = path.join('/tmp', 'uploads');
 
@@ -1256,6 +1297,9 @@ export class Database {
 
     data.mediaAssets = assets;
     this.save(data);
+    PersistentMediaManager.addAsset(newAsset).catch((err) => {
+      console.warn('[DB] PersistentMediaManager.addAsset background error:', err);
+    });
     return newAsset;
   }
 
@@ -1276,22 +1320,30 @@ export class Database {
     if (updates.usage === 'home-character') {
       if (!data.profile.media) data.profile.media = { ...this.getProfile().media };
       data.profile.media.heroCharacter = assets[idx].url;
+      PersistentMediaManager.setSlot('heroCharacter', assets[idx].url);
       if (!data.heroConfig) data.heroConfig = this.getHeroConfig();
       data.heroConfig.profileImage = assets[idx].url;
     } else if (updates.usage === 'about') {
       if (!data.profile.media) data.profile.media = { ...this.getProfile().media };
       data.profile.media.aboutPhoto = assets[idx].url;
+      PersistentMediaManager.setSlot('aboutPhoto', assets[idx].url);
       if (!data.aboutConfig) data.aboutConfig = this.getAboutConfig();
       data.aboutConfig.profileImage = assets[idx].url;
     }
 
     data.mediaAssets = assets;
     this.save(data);
+    PersistentMediaManager.updateAsset(filename, updates).catch((err) => {
+      console.warn('[DB] PersistentMediaManager.updateAsset background error:', err);
+    });
     return assets[idx];
   }
 
   public static deleteMediaAsset(filename: string): boolean {
     const data = this.load();
+    PersistentMediaManager.deleteAsset(filename).catch((err) => {
+      console.warn('[DB] PersistentMediaManager.deleteAsset background error:', err);
+    });
     if (!data.mediaAssets) return false;
     const initialLen = data.mediaAssets.length;
     data.mediaAssets = data.mediaAssets.filter(a => a.filename !== filename);

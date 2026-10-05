@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import multer from 'multer';
 import { Database } from './server/db.ts';
 import type { StoredUser } from './server/db.ts';
+import { PersistentMediaManager } from './server/persistent-media.ts';
 
 const PORT = Number(process.env.PORT) || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'manikantha-portfolio-jwt-secret-key-2026-futuristic';
@@ -216,8 +217,13 @@ app.get(['/uploads/:filename', '/api/uploads/:filename'], (req: Request, res: Re
     }
   }
 
-  // 2. Fallback to Database dataUrl
+  // 2. If stored in Vercel Blob, redirect directly to public Blob URL
   const asset = Database.getMediaAssetByFilename(cleanFilename);
+  if (asset?.url && (asset.url.startsWith('http://') || asset.url.startsWith('https://'))) {
+    return res.redirect(301, asset.url);
+  }
+
+  // 3. Fallback to Database dataUrl
   if (asset?.dataUrl) {
     const match = asset.dataUrl.match(/^data:([^;]+);base64,(.+)$/);
     if (match) {
@@ -341,8 +347,9 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
   // ==========================================
   // PROFILE & CONFIG ROUTES
   // ==========================================
-  app.get('/api/profile', (_req: Request, res: Response) => {
+  app.get('/api/profile', async (_req: Request, res: Response) => {
     try {
+      await PersistentMediaManager.ensureInitialized();
       const profile = Database.getProfile();
       res.json(profile);
     } catch {
@@ -350,9 +357,11 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
     }
   });
 
-  app.put('/api/profile', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  app.put('/api/profile', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
     try {
+      await PersistentMediaManager.ensureInitialized();
       const updated = Database.updateProfile(req.body);
+      await PersistentMediaManager.persistRegistry();
       res.json(updated);
     } catch {
       res.status(500).json({ error: 'Failed to update profile.' });
@@ -693,8 +702,9 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
   // ==========================================
   // MEDIA ROUTES
   // ==========================================
-  app.get('/api/media', requireAdmin, (_req: AuthenticatedRequest, res: Response) => {
+  app.get('/api/media', requireAdmin, async (_req: AuthenticatedRequest, res: Response) => {
     try {
+      await PersistentMediaManager.ensureInitialized();
       const mediaList = Database.getMediaAssets();
       res.json(mediaList);
     } catch {
@@ -702,10 +712,11 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
     }
   });
 
-  app.put('/api/media/:filename', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  app.put('/api/media/:filename', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const { filename } = req.params;
       const safeFilename = path.basename(filename);
+      await PersistentMediaManager.ensureInitialized();
       const updated = Database.updateMediaAsset(safeFilename, req.body);
       if (!updated) {
         res.status(404).json({ error: 'Media asset not found.' });
@@ -717,7 +728,7 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
     }
   });
 
-  app.delete('/api/media/:filename', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  app.delete('/api/media/:filename', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const { filename } = req.params;
       // Prevent directory traversal
@@ -734,6 +745,7 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
           // ignore error
         }
       }
+      await PersistentMediaManager.deleteAsset(safeFilename);
       Database.deleteMediaAsset(safeFilename);
       res.json({ success: true, filename: safeFilename });
     } catch {
@@ -742,7 +754,7 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
   });
 
   app.post('/api/media/upload', requireAdmin, (req: AuthenticatedRequest, res: Response): void => {
-    upload.single('file')(req, res, (err: unknown) => {
+    upload.single('file')(req, res, async (err: unknown) => {
       if (err) {
         console.error('[API] Media upload error:', err);
         const message = err instanceof Error ? err.message : 'Upload failed';
@@ -755,45 +767,63 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
         return;
       }
 
-      const ext = path.extname(req.file.originalname).toLowerCase() || '.png';
-      const safeName = path.basename(req.file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
-      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e6)}`;
-      const filename = `${safeName}-${uniqueSuffix}${ext}`;
-      const fileUrl = `/uploads/${filename}`;
-      const usage = req.body?.usage || 'general';
+      try {
+        const ext = path.extname(req.file.originalname).toLowerCase() || '.png';
+        const safeName = path.basename(req.file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
+        const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e6)}`;
+        const filename = `${safeName}-${uniqueSuffix}${ext}`;
+        const usage = req.body?.usage || 'general';
 
-      const dataUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+        let fileUrl: string;
 
-      // Write to disk caches where writable
-      for (const dir of [uploadsDir, defaultUploadsDir, tmpUploadsDir, distUploadsDir]) {
-        try {
-          if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-          fs.writeFileSync(path.join(dir, filename), req.file.buffer);
-        } catch {
-          // ignore disk cache write failure in read-only environments
+        // Permanent storage in Vercel Blob when configured
+        if (PersistentMediaManager.isBlobConfigured()) {
+          const blob = await PersistentMediaManager.uploadFile(
+            filename,
+            req.file.buffer,
+            req.file.mimetype
+          );
+          fileUrl = blob.url;
+        } else {
+          // Local disk fallback for local development or test runs
+          fileUrl = `/uploads/${filename}`;
+          for (const dir of [uploadsDir, defaultUploadsDir, tmpUploadsDir, distUploadsDir]) {
+            try {
+              if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+              fs.writeFileSync(path.join(dir, filename), req.file.buffer);
+            } catch {
+              // ignore disk cache write failure in read-only environments
+            }
+          }
         }
+
+        const dataUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+
+        const savedAsset = Database.addMediaAsset({
+          filename,
+          url: fileUrl,
+          dataUrl,
+          mimeType: req.file.mimetype,
+          originalName: req.file.originalname,
+          size: req.file.size,
+          usage,
+        });
+
+        res.json({
+          success: true,
+          fileUrl,
+          dataUrl,
+          filename,
+          originalName: req.file.originalname,
+          size: req.file.size,
+          mimeType: req.file.mimetype,
+          asset: savedAsset,
+        });
+      } catch (uploadErr) {
+        console.error('[API] Media upload storage failure:', uploadErr);
+        const message = uploadErr instanceof Error ? uploadErr.message : 'Media upload failed';
+        res.status(500).json({ error: message });
       }
-
-      const savedAsset = Database.addMediaAsset({
-        filename,
-        url: fileUrl,
-        dataUrl,
-        mimeType: req.file.mimetype,
-        originalName: req.file.originalname,
-        size: req.file.size,
-        usage,
-      });
-
-      res.json({
-        success: true,
-        fileUrl,
-        dataUrl,
-        filename,
-        originalName: req.file.originalname,
-        size: req.file.size,
-        mimeType: req.file.mimetype,
-        asset: savedAsset,
-      });
     });
   });
 
@@ -1182,6 +1212,8 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
   });
 
 export default app;
+export { PersistentMediaManager } from './server/persistent-media.ts';
+export { Database } from './server/db.ts';
 
 async function startServer() {
   // ==========================================

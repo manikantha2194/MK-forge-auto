@@ -35,11 +35,6 @@ export const Footer: React.FC = () => {
             alt="Brand Banner forge_auto"
             data-slot="BANNER_FORGE_AUTO"
             referrerPolicy="no-referrer"
-            onError={(e) => {
-              if (e.currentTarget.src !== window.location.origin + '/assets/mk-forge-auto.svg') {
-                e.currentTarget.src = '/assets/mk-forge-auto.svg';
-              }
-            }}
             className="w-full h-full object-cover object-center group-hover:scale-[1.01] transition-transform duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 via-transparent to-transparent pointer-events-none" />
@@ -59,11 +54,6 @@ export const Footer: React.FC = () => {
                 src={brandIcon}
                 alt="Brand Icon"
                 referrerPolicy="no-referrer"
-                onError={(e) => {
-                  if (e.currentTarget.src !== window.location.origin + '/assets/mk-logo.svg') {
-                    e.currentTarget.src = '/assets/mk-logo.svg';
-                  }
-                }}
                 className="w-full h-full object-contain"
               />
             </div>

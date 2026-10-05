@@ -45,13 +45,8 @@ export const MediaFallback: React.FC<MediaFallbackProps> = ({
       alt={alt}
       referrerPolicy="no-referrer"
       onError={() => {
-        if (fallbackSrc && currentSrc !== fallbackSrc) {
-          console.warn(`[MediaFallback] Failed to load "${currentSrc}", trying fallback "${fallbackSrc}"`);
-          setCurrentSrc(fallbackSrc);
-        } else {
-          console.warn(`[MediaFallback] Failed to load image: ${currentSrc}`);
-          setHasError(true);
-        }
+        console.warn(`[MediaFallback] Failed to load image: ${currentSrc}`);
+        setHasError(true);
       }}
       className={className}
       {...props}

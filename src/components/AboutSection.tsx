@@ -60,7 +60,6 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) =>
                 <div className="w-full h-full rounded-xl overflow-hidden bg-[#050505] relative">
                   <MediaFallback
                     src={aboutPhotoSrc}
-                    fallbackSrc="/assets/about-manikantha.svg"
                     alt="Manikantha Portrait"
                     className="w-full h-full object-cover object-center filter grayscale-[20%] contrast-105 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700"
                     fallbackText="Manikantha Photo"

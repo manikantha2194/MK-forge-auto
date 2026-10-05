@@ -233,7 +233,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onViewWork, onHireMe }
               >
                 <MediaFallback
                   src={heroCharacterSrc}
-                  fallbackSrc="/assets/hero-character.svg"
                   alt="Manikantha Hero Character"
                   className="w-full h-full object-contain filter drop-shadow-[0_15px_35px_rgba(255,122,0,0.3)] transition-all"
                   fallbackText="Manikantha Character"

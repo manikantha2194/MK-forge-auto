@@ -43,10 +43,10 @@
       "email": "manimoram143@gmail.com"
     },
     "media": {
-      "heroCharacter": "/uploads/asset-A-1790426643287-522252.svg",
-      "aboutPhoto": "/uploads/asset-B-1790426643298-538900.svg",
-      "brandIcon": "/uploads/asset-C-1790426643307-96297.svg",
-      "brandBanner": "/uploads/asset-D-1790426643317-876867.svg"
+      "heroCharacter": "/assets/hero-character.svg",
+      "aboutPhoto": "/assets/about-manikantha.svg",
+      "brandIcon": "/assets/mk-logo.svg",
+      "brandBanner": "/assets/mk-forge-auto.svg"
     }
   },
   "stats": [
@@ -573,7 +573,7 @@
     "heading": "FREELANCER",
     "subtitle": "AI/ML • WEB DESIGNER • CONTENT CREATOR",
     "description": "Architecting intelligent algorithms, cinematic motion, and high-performance digital platforms with futuristic precision.",
-    "profileImage": "/uploads/asset-A-1790426643287-522252.svg",
+    "profileImage": "/assets/hero-character.svg",
     "primaryBtnText": "Hire Me",
     "primaryBtnUrl": "#contact",
     "secondaryBtnText": "Explore Portfolio",
@@ -593,7 +593,7 @@
   "aboutConfig": {
     "heading": "Engineering Code & Visual Craft",
     "subheading": "BRIDGING INTELLIGENCE, SYSTEMS & MEDIA",
-    "profileImage": "/uploads/asset-B-1790426643298-538900.svg",
+    "profileImage": "/assets/about-manikantha.svg",
     "shortIntro": "Bridging Artificial Intelligence, Modern Web Systems & Cinematic Media",
     "longDescription": [
       "I am an enthusiastic AI/ML learner & developer, creative web designer, and digital content creator driven by the pursuit of futuristic technology and aesthetic precision.",

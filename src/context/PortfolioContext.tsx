@@ -330,14 +330,19 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     if (link.getAttribute('href') !== brandIconUrl) {
       link.href = brandIconUrl;
-      if (brandIconUrl.endsWith('.svg') || brandIconUrl.startsWith('data:image/svg+xml')) {
+      const cleanUrl = brandIconUrl.split('?')[0].toLowerCase();
+      if (cleanUrl.endsWith('.svg') || brandIconUrl.startsWith('data:image/svg+xml')) {
         link.type = 'image/svg+xml';
-      } else if (brandIconUrl.endsWith('.png') || brandIconUrl.startsWith('data:image/png')) {
+      } else if (cleanUrl.endsWith('.png') || brandIconUrl.startsWith('data:image/png')) {
         link.type = 'image/png';
-      } else if (brandIconUrl.endsWith('.ico') || brandIconUrl.startsWith('data:image/x-icon')) {
+      } else if (cleanUrl.endsWith('.ico') || brandIconUrl.startsWith('data:image/x-icon')) {
         link.type = 'image/x-icon';
-      } else if (brandIconUrl.endsWith('.webp')) {
+      } else if (cleanUrl.endsWith('.webp') || brandIconUrl.startsWith('data:image/webp')) {
         link.type = 'image/webp';
+      } else if (cleanUrl.endsWith('.jpg') || cleanUrl.endsWith('.jpeg')) {
+        link.type = 'image/jpeg';
+      } else {
+        link.type = 'image/png';
       }
     }
   }, [profile?.media?.brandIcon]);

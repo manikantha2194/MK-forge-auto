@@ -1210,6 +1210,17 @@ export default app;
 export { PersistentMediaManager } from './server/persistent-media.ts';
 export { Database } from './server/db.ts';
 
+try {
+  const gMod = (globalThis as unknown as { module?: Record<string, unknown> }).module;
+  if (gMod && typeof gMod === 'object') {
+    gMod.exports = app;
+    (gMod.exports as Record<string, unknown>).default = app;
+    (gMod.exports as Record<string, unknown>).app = app;
+  }
+} catch {
+  // ignore
+}
+
 async function startServer() {
   // ==========================================
   // VITE OR STATIC SERVING
@@ -1234,15 +1245,15 @@ async function startServer() {
   });
 }
 
-const isMainModule = Boolean(
-  process.argv[1] &&
-  (process.argv[1].endsWith('server.ts') ||
-   process.argv[1].endsWith('server.cjs') ||
-   process.argv[1].endsWith('server.js'))
+const isVercelServerless = Boolean(
+  process.env.VERCEL === '1' ||
+  process.env.NOW_REGION ||
+  process.env.AWS_LAMBDA_FUNCTION_NAME ||
+  process.env.LAMBDA_TASK_ROOT
 );
 
-// Only launch standalone listener when executed directly (not in Vercel Serverless environment or when imported)
-if (isMainModule && process.env.VERCEL !== '1' && !process.env.NOW_REGION && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+// Only launch standalone listener in standalone mode (not in Vercel Serverless lambda environment)
+if (!isVercelServerless) {
   startServer().catch(err => {
     console.error('[SERVER] Fatal server error:', err);
     process.exit(1);

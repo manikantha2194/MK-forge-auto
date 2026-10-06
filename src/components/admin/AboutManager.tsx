@@ -30,26 +30,53 @@ export const AboutManager: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [photoUploadError, setPhotoUploadError] = useState<string | null>(null);
+  const [photoUploadSuccess, setPhotoUploadSuccess] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [mediaAssets, setMediaAssets] = useState<MediaAssetItem[]>([]);
 
   const handlePhotoUpload = async (file: File) => {
     const activeToken = token || localStorage.getItem('mk_auth_token');
     setIsUploadingPhoto(true);
+    setPhotoUploadError(null);
+    setPhotoUploadSuccess(null);
+
     const formData = new FormData();
     formData.append('usage', 'about');
     formData.append('assignTo', 'aboutPhoto');
     formData.append('file', file);
+
+    console.log('[Upload] Sending upload request with usage=about, file:', file.name, file.size);
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 28000);
 
     try {
       const res = await apiFetch('/api/media/upload', {
         method: 'POST',
         headers: activeToken ? { Authorization: `Bearer ${activeToken}` } : {},
         body: formData,
+        signal: controller.signal,
       });
+      clearTimeout(timer);
+
+      console.log('[Upload] Response status:', res.status);
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error('[Upload] Upload failed:', errorData);
+        setPhotoUploadError(errorData.error || `Upload failed with status ${res.status}`);
+        setIsUploadingPhoto(false);
+        return;
+      }
+
       const data = await res.json();
-      if (res.ok && data.fileUrl) {
+      console.log('[Upload] Upload successful:', data);
+
+      if (data.success && data.fileUrl) {
+        setPhotoUploadSuccess('Image uploaded successfully!');
         setForm(prev => prev ? { ...prev, profileImage: data.fileUrl } : prev);
+
         if (updateAboutConfig) {
           await updateAboutConfig({ ...(form || {}), profileImage: data.fileUrl });
         }
@@ -57,9 +84,18 @@ export const AboutManager: React.FC = () => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           await updateProfile({ media: { aboutPhoto: data.fileUrl } as any });
         }
+
+        setTimeout(() => {
+          setPhotoUploadSuccess(null);
+        }, 3500);
+      } else {
+        setPhotoUploadError(data.error || 'Upload returned an unexpected response');
       }
-    } catch {
-      // Ignored
+    } catch (err: unknown) {
+      clearTimeout(timer);
+      console.error('[Upload] Upload error:', err);
+      const isAbort = err instanceof Error && err.name === 'AbortError';
+      setPhotoUploadError(isAbort ? 'Upload timed out. Please check network or try a smaller file.' : (err instanceof Error ? err.message : 'Upload failed'));
     } finally {
       setIsUploadingPhoto(false);
     }
@@ -370,6 +406,7 @@ export const AboutManager: React.FC = () => {
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) handlePhotoUpload(file);
+                      e.target.value = '';
                     }}
                   />
                 </label>
@@ -391,6 +428,19 @@ export const AboutManager: React.FC = () => {
                   Reset Default
                 </button>
               </div>
+
+              {photoUploadError && (
+                <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono flex items-center justify-between">
+                  <span>{photoUploadError}</span>
+                  <button type="button" onClick={() => setPhotoUploadError(null)} className="text-zinc-400 hover:text-white ml-2">×</button>
+                </div>
+              )}
+
+              {photoUploadSuccess && (
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+                  {photoUploadSuccess}
+                </div>
+              )}
 
               <div>
                 <label className="text-xs font-semibold text-zinc-300">Image Asset URL</label>

@@ -757,16 +757,34 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
   });
 
   app.post('/api/media/upload', requireAdmin, (req: AuthenticatedRequest, res: Response): void => {
+    console.log('[API] POST /api/media/upload initiated by:', req.user?.email || 'authenticated user');
+
+    let isDone = false;
+    const timeout = setTimeout(() => {
+      if (!isDone) {
+        isDone = true;
+        console.error('[API] Media upload processing timed out after 25s.');
+        res.status(504).json({ error: 'Upload request timed out.', success: false });
+      }
+    }, 25000);
+
     upload.single('file')(req, res, async (err: unknown) => {
+      if (isDone) return;
+
       if (err) {
+        clearTimeout(timeout);
+        isDone = true;
         console.error('[API] Media upload error:', err);
         const message = err instanceof Error ? err.message : 'Upload failed';
-        res.status(400).json({ error: message });
+        res.status(400).json({ error: message, success: false });
         return;
       }
 
       if (!req.file) {
-        res.status(400).json({ error: 'No file provided in the upload request.' });
+        clearTimeout(timeout);
+        isDone = true;
+        console.error('[API] No file found in multipart upload request.');
+        res.status(400).json({ error: 'No file provided in the upload request.', success: false });
         return;
       }
 
@@ -777,6 +795,8 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
         const filename = `${safeName}-${uniqueSuffix}${ext}`;
         const usage = req.body?.usage || (req.query?.usage as string) || (req.headers['x-usage'] as string) || 'general';
         const assignTo = req.body?.assignTo || (req.query?.assignTo as string) || (req.headers['x-assign-to'] as string);
+
+        console.log(`[API] Processing file: ${req.file.originalname} (${req.file.size} bytes), usage=${usage}, assignTo=${assignTo}`);
 
         // Permanent storage in Vercel Blob
         const blob = await PersistentMediaManager.uploadFile(
@@ -831,6 +851,10 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
           });
         }
 
+        clearTimeout(timeout);
+        isDone = true;
+        console.log(`[API] Upload successful for ${filename}. Returning fileUrl: ${fileUrl}`);
+
         res.json({
           success: true,
           fileUrl,        // ← This should be the Vercel Blob URL
@@ -839,9 +863,11 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
           asset: savedAsset,
         });
       } catch (uploadErr) {
+        clearTimeout(timeout);
+        isDone = true;
         console.error('[API] Media upload storage failure:', uploadErr);
         const message = uploadErr instanceof Error ? uploadErr.message : 'Media upload failed';
-        res.status(500).json({ error: message });
+        res.status(500).json({ error: message, success: false });
       }
     });
   });

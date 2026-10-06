@@ -145,21 +145,33 @@ export const ProjectsManager: React.FC = () => {
     formData.append('usage', 'project');
     formData.append('file', file);
 
+    console.log('[Upload] Uploading project cover:', file.name);
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 28000);
+
     try {
       const res = await apiFetch('/api/media/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
+        signal: controller.signal,
       });
-      const data = await res.json();
+      clearTimeout(timer);
+
+      console.log('[Upload] Projects cover upload status:', res.status);
+      const data = await res.json().catch(() => ({}));
+
       if (res.ok && data.fileUrl) {
         setForm((prev) => ({ ...prev, imageUrl: data.fileUrl }));
         setMessage({ type: 'success', text: 'Cover image uploaded and linked successfully!' });
       } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to upload image.' });
+        setMessage({ type: 'error', text: data.error || `Upload failed with status ${res.status}` });
       }
-    } catch {
-      setMessage({ type: 'error', text: 'Network error uploading cover image.' });
+    } catch (err: unknown) {
+      clearTimeout(timer);
+      const isAbort = err instanceof Error && err.name === 'AbortError';
+      setMessage({ type: 'error', text: isAbort ? 'Upload timed out. Please try a smaller image.' : 'Network error uploading cover image.' });
     } finally {
       setUploadingImage(false);
     }

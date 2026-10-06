@@ -814,6 +814,18 @@
   },
   "mediaAssets": [
     {
+      "id": "media-1791271555232-9s2ls",
+      "filename": "my-new-character-1791271555231-541280.png",
+      "url": "/uploads/my-new-character-1791271555231-541280.png",
+      "dataUrl": "data:image/png;base64,UE5HX0JZVEVTXzE3OTEyNzE1NTUyMTE=",
+      "mimeType": "image/png",
+      "originalName": "my-new-character.png",
+      "name": "my new character",
+      "size": 23,
+      "createdAt": "2026-10-06T07:25:55.233Z",
+      "usage": "home-character"
+    },
+    {
       "id": "media-1791270492758-qgzz8",
       "filename": "general-test-1791270492757-959286.png",
       "url": "/uploads/general-test-1791270492757-959286.png",

@@ -28,26 +28,53 @@ export const HomeHeroManager: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isUploadingChar, setIsUploadingChar] = useState(false);
+  const [charUploadError, setCharUploadError] = useState<string | null>(null);
+  const [charUploadSuccess, setCharUploadSuccess] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [mediaAssets, setMediaAssets] = useState<MediaAssetItem[]>([]);
 
   const handleCharUpload = async (file: File) => {
     const activeToken = token || localStorage.getItem('mk_auth_token');
     setIsUploadingChar(true);
+    setCharUploadError(null);
+    setCharUploadSuccess(null);
+
     const formData = new FormData();
     formData.append('usage', 'home-character');
     formData.append('assignTo', 'heroCharacter');
     formData.append('file', file);
+
+    console.log('[Upload] Sending upload request with usage=home-character, file:', file.name, file.size);
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 28000);
 
     try {
       const res = await apiFetch('/api/media/upload', {
         method: 'POST',
         headers: activeToken ? { Authorization: `Bearer ${activeToken}` } : {},
         body: formData,
+        signal: controller.signal,
       });
+      clearTimeout(timer);
+
+      console.log('[Upload] Response status:', res.status);
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error('[Upload] Upload failed:', errorData);
+        setCharUploadError(errorData.error || `Upload failed with status ${res.status}`);
+        setIsUploadingChar(false);
+        return;
+      }
+
       const data = await res.json();
-      if (res.ok && data.fileUrl) {
+      console.log('[Upload] Upload successful:', data);
+
+      if (data.success && data.fileUrl) {
+        setCharUploadSuccess('Image uploaded successfully!');
         setForm(prev => prev ? { ...prev, profileImage: data.fileUrl } : prev);
+
         if (updateHeroConfig) {
           await updateHeroConfig({ ...(form || {}), profileImage: data.fileUrl });
         }
@@ -55,9 +82,18 @@ export const HomeHeroManager: React.FC = () => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           await updateProfile({ media: { heroCharacter: data.fileUrl } as any });
         }
+
+        setTimeout(() => {
+          setCharUploadSuccess(null);
+        }, 3500);
+      } else {
+        setCharUploadError(data.error || 'Upload returned an unexpected response');
       }
-    } catch {
-      // Ignored
+    } catch (err: unknown) {
+      clearTimeout(timer);
+      console.error('[Upload] Upload error:', err);
+      const isAbort = err instanceof Error && err.name === 'AbortError';
+      setCharUploadError(isAbort ? 'Upload timed out. Please check your network or try a smaller file.' : (err instanceof Error ? err.message : 'Upload failed'));
     } finally {
       setIsUploadingChar(false);
     }
@@ -406,6 +442,7 @@ export const HomeHeroManager: React.FC = () => {
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) handleCharUpload(file);
+                      e.target.value = '';
                     }}
                   />
                 </label>
@@ -427,6 +464,19 @@ export const HomeHeroManager: React.FC = () => {
                   Reset Default
                 </button>
               </div>
+
+              {charUploadError && (
+                <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono flex items-center justify-between">
+                  <span>{charUploadError}</span>
+                  <button type="button" onClick={() => setCharUploadError(null)} className="text-zinc-400 hover:text-white ml-2">×</button>
+                </div>
+              )}
+
+              {charUploadSuccess && (
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+                  {charUploadSuccess}
+                </div>
+              )}
 
               <div>
                 <label className="text-xs font-semibold text-zinc-300">Image Asset URL</label>

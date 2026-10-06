@@ -242,17 +242,28 @@ export const MediaManager: React.FC = () => {
     formData.append('usage', preferredUsage);
     formData.append('file', file);
 
+    console.log('[Upload] Uploading asset:', file.name, 'usage:', preferredUsage);
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 28000);
+
     try {
       const res = await apiFetch('/api/media/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
+        signal: controller.signal,
       });
+      clearTimeout(timer);
 
-      const data = await res.json();
+      console.log('[Upload] General upload status:', res.status);
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data.error || 'Upload failed');
+        console.error('[Upload] General upload failed:', data);
+        throw new Error(data.error || `Upload failed with status ${res.status}`);
       }
+
+      console.log('[Upload] General upload successful:', data);
 
       await loadMediaAssets();
       setSuccessMessage(`Asset "${file.name}" uploaded successfully and added to Media Assets!`);
@@ -590,16 +601,29 @@ export const MediaManager: React.FC = () => {
     }
     formData.append('file', file);
 
+    console.log(`[Upload] Uploading core slot ${slotKey} with usage=${usage}, file:`, file.name, file.size);
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 28000);
+
     try {
       const uploadRes = await apiFetch('/api/media/upload', {
         method: 'POST',
         headers: activeToken ? { Authorization: `Bearer ${activeToken}` } : {},
         body: formData,
+        signal: controller.signal,
       });
-      const uploadData = await uploadRes.json();
+      clearTimeout(timer);
+
+      console.log(`[Upload] Response status for ${slotKey}:`, uploadRes.status);
+      const uploadData = await uploadRes.json().catch(() => ({}));
+
       if (!uploadRes.ok || !uploadData.fileUrl) {
-        throw new Error(uploadData.error || 'Upload failed');
+        console.error(`[Upload] Upload failed for ${slotKey}:`, uploadData);
+        throw new Error(uploadData.error || `Upload failed with status ${uploadRes.status}`);
       }
+
+      console.log(`[Upload] Upload successful for ${slotKey}:`, uploadData);
 
       const newUrl = uploadData.fileUrl;
 

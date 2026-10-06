@@ -130,6 +130,20 @@ export class PersistentMediaManager {
         }
       }
 
+      // Strip any invalid dummy store URLs
+      if (currentRegistry.slots.heroCharacter?.includes('mk-forge-auto')) {
+        currentRegistry.slots.heroCharacter = '/assets/hero-character.svg';
+      }
+      if (currentRegistry.slots.aboutPhoto?.includes('mk-forge-auto')) {
+        currentRegistry.slots.aboutPhoto = '/assets/about-manikantha.svg';
+      }
+      if (currentRegistry.slots.brandIcon?.includes('mk-forge-auto')) {
+        currentRegistry.slots.brandIcon = '/assets/mk-logo.svg';
+      }
+      if (currentRegistry.slots.brandBanner?.includes('mk-forge-auto')) {
+        currentRegistry.slots.brandBanner = '/assets/mk-forge-auto.svg';
+      }
+
       this.registry = currentRegistry;
       this.isInitialized = true;
       this.initPromise = null;
@@ -198,21 +212,35 @@ export class PersistentMediaManager {
           token,
         });
 
+        // Store and return the actual blob URL from Vercel Blob response without reconstructing
+        const permanentUrl = blob.url;
+
         return {
-          url: blob.url,
+          url: permanentUrl,
           pathname: blob.pathname,
           size: buffer.length,
         };
       } catch (err) {
-        console.warn('[PersistentMedia] Vercel Blob put failed, generating permanent Vercel Blob URL:', err);
+        console.warn('[PersistentMedia] Vercel Blob upload failed:', err);
       }
     }
 
-    // Permanent public Vercel Blob URL for this store
-    const storeId = process.env.BLOB_STORE_ID || 'mk-forge-auto';
-    const blobUrl = `https://${storeId}.public.blob.vercel-storage.com/${blobPath}`;
+    // Get the store ID from the environment if explicitly configured
+    const storeId = process.env.BLOB_STORE_ID;
+    if (storeId) {
+      const blobUrl = `https://${storeId}.public.blob.vercel-storage.com/${blobPath}`;
+      return {
+        url: blobUrl,
+        pathname: blobPath,
+        size: buffer.length,
+      };
+    }
+
+    // Fallback: If no BLOB_STORE_ID is set and Vercel Blob put was not executed,
+    // deliver through the local/Vercel serverless /uploads/ route rather than constructing broken URLs
+    console.warn('[PersistentMedia] BLOB_STORE_ID not set, falling back to local /uploads/ route.');
     return {
-      url: blobUrl,
+      url: `/uploads/${filename}`,
       pathname: blobPath,
       size: buffer.length,
     };
@@ -248,6 +276,19 @@ export class PersistentMediaManager {
       };
     }
     return { ...this.registry.slots };
+  }
+
+  /**
+   * Sets ONLY a single slot synchronously in memory and cache.
+   */
+  public static setSlotSync(slotKey: keyof BrandSlots, url: string): void {
+    if (this.registry) {
+      this.registry.slots = {
+        ...this.registry.slots,
+        [slotKey]: url,
+      };
+      this.writeLocalCache(this.registry);
+    }
   }
 
   /**

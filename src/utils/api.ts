@@ -64,7 +64,7 @@ export function resolveMediaUrl(url?: string | null): string {
     url.startsWith('data:') ||
     url.startsWith('blob:')
   ) {
-    if (url.includes('run.app')) {
+    if (url.includes('run.app') || url.includes('mk-forge-auto.public.blob.vercel-storage.com')) {
       try {
         const parsed = new URL(url);
         return `${parsed.pathname}${parsed.search}`;

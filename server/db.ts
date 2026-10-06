@@ -244,19 +244,23 @@ export class Database {
     if (newProfile.media) {
       if (newProfile.media.heroCharacter !== undefined) {
         updatedMedia.heroCharacter = newProfile.media.heroCharacter;
-        PersistentMediaManager.setSlot('heroCharacter', newProfile.media.heroCharacter);
+        PersistentMediaManager.setSlotSync('heroCharacter', newProfile.media.heroCharacter);
+        PersistentMediaManager.setSlot('heroCharacter', newProfile.media.heroCharacter).catch(() => {});
       }
       if (newProfile.media.aboutPhoto !== undefined) {
         updatedMedia.aboutPhoto = newProfile.media.aboutPhoto;
-        PersistentMediaManager.setSlot('aboutPhoto', newProfile.media.aboutPhoto);
+        PersistentMediaManager.setSlotSync('aboutPhoto', newProfile.media.aboutPhoto);
+        PersistentMediaManager.setSlot('aboutPhoto', newProfile.media.aboutPhoto).catch(() => {});
       }
       if (newProfile.media.brandIcon !== undefined) {
         updatedMedia.brandIcon = newProfile.media.brandIcon;
-        PersistentMediaManager.setSlot('brandIcon', newProfile.media.brandIcon);
+        PersistentMediaManager.setSlotSync('brandIcon', newProfile.media.brandIcon);
+        PersistentMediaManager.setSlot('brandIcon', newProfile.media.brandIcon).catch(() => {});
       }
       if (newProfile.media.brandBanner !== undefined) {
         updatedMedia.brandBanner = newProfile.media.brandBanner;
-        PersistentMediaManager.setSlot('brandBanner', newProfile.media.brandBanner);
+        PersistentMediaManager.setSlotSync('brandBanner', newProfile.media.brandBanner);
+        PersistentMediaManager.setSlot('brandBanner', newProfile.media.brandBanner).catch(() => {});
       }
     }
 

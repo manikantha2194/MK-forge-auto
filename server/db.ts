@@ -227,7 +227,9 @@ export class Database {
     return PersistentMediaManager.syncWithProfile(baseProfile);
   }
 
-  public static updateProfile(newProfile: Partial<ProfileConfig>): ProfileConfig {
+  public static updateProfile(
+    newProfile: Partial<Omit<ProfileConfig, 'media'>> & { media?: Partial<NonNullable<ProfileConfig['media']>> }
+  ): ProfileConfig {
     const data = this.load();
 
     const currentMedia = data.profile?.media || {

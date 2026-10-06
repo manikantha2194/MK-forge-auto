@@ -807,14 +807,26 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
           usage,
         });
 
+        // Auto-assign image to profile based on usage
+        if (usage === 'home-character') {
+          Database.updateProfile({
+            media: { heroCharacter: fileUrl }
+          });
+        } else if (usage === 'about') {
+          Database.updateProfile({
+            media: { aboutPhoto: fileUrl }
+          });
+        } else if (usage === 'general' && req.body?.assignTo === 'logo') {
+          Database.updateProfile({
+            media: { brandIcon: fileUrl }
+          });
+        }
+
         res.json({
           success: true,
-          fileUrl,
-          dataUrl,
+          fileUrl,        // ← This should be the Vercel Blob URL
+          dataUrl,        // ← Also include base64
           filename,
-          originalName: req.file.originalname,
-          size: req.file.size,
-          mimeType: req.file.mimetype,
           asset: savedAsset,
         });
       } catch (uploadErr) {

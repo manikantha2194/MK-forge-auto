@@ -43,9 +43,9 @@
       "email": "manimoram143@gmail.com"
     },
     "media": {
-      "heroCharacter": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/hero-avatar-a-1791180088506-890810.svg",
-      "aboutPhoto": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/about-portrait-b-1791180088519-936938.svg",
-      "brandIcon": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/brand-icon-c-1791180088530-273852.svg",
+      "heroCharacter": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/hero-char-test-1791267879020-847584.png",
+      "aboutPhoto": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/about-portrait-test-1791267879053-693243.png",
+      "brandIcon": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/logo-test-1791267879069-597661.png",
       "brandBanner": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/brand-banner-d-1791180088541-578889.svg"
     }
   },
@@ -573,7 +573,7 @@
     "heading": "FREELANCER",
     "subtitle": "AI/ML • WEB DESIGNER • CONTENT CREATOR",
     "description": "Architecting intelligent algorithms, cinematic motion, and high-performance digital platforms with futuristic precision.",
-    "profileImage": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/hero-avatar-a-1791180088506-890810.svg",
+    "profileImage": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/hero-char-test-1791267879020-847584.png",
     "primaryBtnText": "Hire Me",
     "primaryBtnUrl": "#contact",
     "secondaryBtnText": "Explore Portfolio",
@@ -593,7 +593,7 @@
   "aboutConfig": {
     "heading": "Engineering Code & Visual Craft",
     "subheading": "BRIDGING INTELLIGENCE, SYSTEMS & MEDIA",
-    "profileImage": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/about-portrait-b-1791180088519-936938.svg",
+    "profileImage": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/about-portrait-test-1791267879053-693243.png",
     "shortIntro": "Bridging Artificial Intelligence, Modern Web Systems & Cinematic Media",
     "longDescription": [
       "I am an enthusiastic AI/ML learner & developer, creative web designer, and digital content creator driven by the pursuit of futuristic technology and aesthetic precision.",
@@ -813,6 +813,42 @@
     ]
   },
   "mediaAssets": [
+    {
+      "id": "media-1791267879069-gb4gi",
+      "filename": "logo-test-1791267879069-597661.png",
+      "url": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/logo-test-1791267879069-597661.png",
+      "dataUrl": "data:image/png;base64,RmFrZVBuZ0RhdGFCeXRlczE3OTEyNjc4NzkwNjQ=",
+      "mimeType": "image/png",
+      "originalName": "logo-test.png",
+      "name": "logo test",
+      "size": 29,
+      "createdAt": "2026-10-06T06:24:39.069Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1791267879054-j0lhz",
+      "filename": "about-portrait-test-1791267879053-693243.png",
+      "url": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/about-portrait-test-1791267879053-693243.png",
+      "dataUrl": "data:image/png;base64,RmFrZVBuZ0RhdGFCeXRlczE3OTEyNjc4NzkwNDM=",
+      "mimeType": "image/png",
+      "originalName": "about-portrait-test.png",
+      "name": "about portrait test",
+      "size": 29,
+      "createdAt": "2026-10-06T06:24:39.054Z",
+      "usage": "about"
+    },
+    {
+      "id": "media-1791267879022-bsfml",
+      "filename": "hero-char-test-1791267879020-847584.png",
+      "url": "https://mk-forge-auto.public.blob.vercel-storage.com/uploads/hero-char-test-1791267879020-847584.png",
+      "dataUrl": "data:image/png;base64,RmFrZVBuZ0RhdGFCeXRlczE3OTEyNjc4NzkwMDY=",
+      "mimeType": "image/png",
+      "originalName": "hero-char-test.png",
+      "name": "hero char test",
+      "size": 29,
+      "createdAt": "2026-10-06T06:24:39.022Z",
+      "usage": "home-character"
+    },
     {
       "id": "media-1791180088542-v6gqc",
       "filename": "brand-banner-d-1791180088541-578889.svg",

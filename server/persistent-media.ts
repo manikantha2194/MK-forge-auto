@@ -192,58 +192,49 @@ export class PersistentMediaManager {
 
   /**
    * Uploads an image buffer to Vercel Blob using put().
-   * Always returns a permanent public Vercel Blob URL (https://*.public.blob.vercel-storage.com/uploads/...).
+   * Uses the actual blob.url directly from Vercel without reconstructing store IDs.
    */
   public static async uploadFile(
     filename: string,
     buffer: Buffer,
-    contentType: string
+    mimeType: string
   ): Promise<{ url: string; pathname: string; size: number }> {
-    const token = this.getBlobToken();
-    const blobPath = `uploads/${filename}`;
+    const blobPath = `media/${filename}`;
 
-    if (token) {
+    // Try to upload to Vercel Blob if token is configured
+    if (this.isBlobConfigured()) {
       try {
+        const token = this.getBlobToken();
         const blob = await put(blobPath, buffer, {
           access: 'public',
-          contentType: contentType || 'application/octet-stream',
-          addRandomSuffix: false,
-          allowOverwrite: true,
           token,
+          contentType: mimeType,
         });
 
-        // Store and return the actual blob URL from Vercel Blob response without reconstructing
-        const permanentUrl = blob.url;
-
+        // ✅ Use the actual blob.url from Vercel!
+        // Don't try to rebuild with Store ID
         return {
-          url: permanentUrl,
+          url: blob.url,
           pathname: blob.pathname,
           size: buffer.length,
         };
       } catch (err) {
-        console.warn('[PersistentMedia] Vercel Blob upload failed:', err);
+        console.error('[PersistentMedia] Vercel Blob upload failed:', err);
+        throw new Error('Failed to upload to Vercel Blob: ' + (err instanceof Error ? err.message : String(err)));
       }
     }
 
-    // Get the store ID from the environment if explicitly configured
-    const storeId = process.env.BLOB_STORE_ID;
-    if (storeId) {
-      const blobUrl = `https://${storeId}.public.blob.vercel-storage.com/${blobPath}`;
+    // In non-Vercel local development, allow local uploads route fallback
+    if (!process.env.VERCEL) {
       return {
-        url: blobUrl,
+        url: `/uploads/${filename}`,
         pathname: blobPath,
         size: buffer.length,
       };
     }
 
-    // Fallback: If no BLOB_STORE_ID is set and Vercel Blob put was not executed,
-    // deliver through the local/Vercel serverless /uploads/ route rather than constructing broken URLs
-    console.warn('[PersistentMedia] BLOB_STORE_ID not set, falling back to local /uploads/ route.');
-    return {
-      url: `/uploads/${filename}`,
-      pathname: blobPath,
-      size: buffer.length,
-    };
+    // Fallback if Blob not configured on Vercel
+    throw new Error('Vercel Blob not configured - set BLOB_READ_WRITE_TOKEN environment variable');
   }
 
   /**

@@ -814,6 +814,18 @@
   },
   "mediaAssets": [
     {
+      "id": "media-1791269547368-rsd6s",
+      "filename": "test-hero-1791269547367-957546.png",
+      "url": "/uploads/test-hero-1791269547367-957546.png",
+      "dataUrl": "data:image/png;base64,VGVzdERhdGFCeXRlczE3OTEyNjk1NDczNTM=",
+      "mimeType": "image/png",
+      "originalName": "test-hero.png",
+      "name": "test hero",
+      "size": 26,
+      "createdAt": "2026-10-06T06:52:27.368Z",
+      "usage": "home-character"
+    },
+    {
       "id": "media-1791268879456-kn1fa",
       "filename": "my-photo-1791268879455-617932.png",
       "url": "/uploads/my-photo-1791268879455-617932.png",

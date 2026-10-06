@@ -152,7 +152,7 @@ function requireAdmin(req: AuthenticatedRequest, res: Response, next: NextFuncti
   });
 }
 
-export const app = express();
+const app = express();
 
 // Path normalization for serverless function rewrites
 app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -1210,6 +1210,7 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
   });
 
 export default app;
+export { app };
 export { PersistentMediaManager } from './server/persistent-media.ts';
 export { Database } from './server/db.ts';
 

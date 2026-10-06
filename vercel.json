@@ -1,19 +1,21 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 30
+    }
+  },
   "routes": [
     {
-      "src": "/api/auth/login",
-      "methods": ["POST"],
-      "dest": "/dist/server.cjs"
-    },
-    {
       "src": "/api/(.*)",
-      "dest": "/dist/server.cjs"
+      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+      "dest": "/api/index.ts"
     },
     {
       "src": "/uploads/(.*)",
-      "dest": "/dist/server.cjs"
+      "methods": ["GET", "POST"],
+      "dest": "/api/index.ts"
     },
     {
       "src": "/(.*)",

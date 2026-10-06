@@ -142,6 +142,7 @@ export const ProjectsManager: React.FC = () => {
     setMessage(null);
 
     const formData = new FormData();
+    formData.append('usage', 'project');
     formData.append('file', file);
 
     try {

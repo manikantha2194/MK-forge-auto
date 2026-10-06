@@ -814,6 +814,42 @@
   },
   "mediaAssets": [
     {
+      "id": "media-1791270492758-qgzz8",
+      "filename": "general-test-1791270492757-959286.png",
+      "url": "/uploads/general-test-1791270492757-959286.png",
+      "dataUrl": "data:image/png;base64,UE5HX0JZVEVTXzE3OTEyNzA0OTI3NTI=",
+      "mimeType": "image/png",
+      "originalName": "general-test.png",
+      "name": "general test",
+      "size": 23,
+      "createdAt": "2026-10-06T07:08:12.758Z",
+      "usage": "general"
+    },
+    {
+      "id": "media-1791270492743-cz20k",
+      "filename": "about-test-1791270492742-158592.png",
+      "url": "/uploads/about-test-1791270492742-158592.png",
+      "dataUrl": "data:image/png;base64,UE5HX0JZVEVTXzE3OTEyNzA0OTI3MzY=",
+      "mimeType": "image/png",
+      "originalName": "about-test.png",
+      "name": "about test",
+      "size": 23,
+      "createdAt": "2026-10-06T07:08:12.743Z",
+      "usage": "about"
+    },
+    {
+      "id": "media-1791270492725-8pf8o",
+      "filename": "home-character-test-1791270492724-675303.png",
+      "url": "/uploads/home-character-test-1791270492724-675303.png",
+      "dataUrl": "data:image/png;base64,UE5HX0JZVEVTXzE3OTEyNzA0OTI3MTE=",
+      "mimeType": "image/png",
+      "originalName": "home-character-test.png",
+      "name": "home character test",
+      "size": 23,
+      "createdAt": "2026-10-06T07:08:12.725Z",
+      "usage": "home-character"
+    },
+    {
       "id": "media-1791269547368-rsd6s",
       "filename": "test-hero-1791269547367-957546.png",
       "url": "/uploads/test-hero-1791269547367-957546.png",

@@ -239,8 +239,8 @@ export const MediaManager: React.FC = () => {
     setErrorMessage(null);
 
     const formData = new FormData();
-    formData.append('file', file);
     formData.append('usage', preferredUsage);
+    formData.append('file', file);
 
     try {
       const res = await apiFetch('/api/media/upload', {
@@ -579,8 +579,16 @@ export const MediaManager: React.FC = () => {
     const activeToken = token || localStorage.getItem('mk_auth_token');
     setUploadingTarget(slotKey);
     const formData = new FormData();
+    const usage = slotKey === 'heroCharacter' ? 'home-character' : slotKey === 'aboutPhoto' ? 'about' : 'general';
+    formData.append('usage', usage);
+    if (slotKey === 'brandIcon') {
+      formData.append('assignTo', 'logo');
+    } else if (slotKey === 'brandBanner') {
+      formData.append('assignTo', 'banner');
+    } else {
+      formData.append('assignTo', slotKey);
+    }
     formData.append('file', file);
-    formData.append('usage', slotKey === 'heroCharacter' ? 'home-character' : slotKey === 'aboutPhoto' ? 'about' : 'general');
 
     try {
       const uploadRes = await apiFetch('/api/media/upload', {

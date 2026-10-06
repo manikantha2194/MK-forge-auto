@@ -775,7 +775,8 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
         const safeName = path.basename(req.file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
         const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e6)}`;
         const filename = `${safeName}-${uniqueSuffix}${ext}`;
-        const usage = req.body?.usage || 'general';
+        const usage = req.body?.usage || (req.query?.usage as string) || (req.headers['x-usage'] as string) || 'general';
+        const assignTo = req.body?.assignTo || (req.query?.assignTo as string) || (req.headers['x-assign-to'] as string);
 
         // Permanent storage in Vercel Blob
         const blob = await PersistentMediaManager.uploadFile(
@@ -808,17 +809,25 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets')))
         });
 
         // Auto-assign image to profile based on usage
-        if (usage === 'home-character') {
+        if (usage === 'home-character' || assignTo === 'heroCharacter') {
+          console.log(`[API] Updating profile with heroCharacter: ${fileUrl}`);
           Database.updateProfile({
             media: { heroCharacter: fileUrl }
           });
-        } else if (usage === 'about') {
+        } else if (usage === 'about' || assignTo === 'aboutPhoto') {
+          console.log(`[API] Updating profile with aboutPhoto: ${fileUrl}`);
           Database.updateProfile({
             media: { aboutPhoto: fileUrl }
           });
-        } else if (usage === 'general' && req.body?.assignTo === 'logo') {
+        } else if ((usage === 'general' && assignTo === 'logo') || assignTo === 'logo' || assignTo === 'brandIcon' || usage === 'logo' || usage === 'brandIcon') {
+          console.log(`[API] Updating profile with brandIcon: ${fileUrl}`);
           Database.updateProfile({
             media: { brandIcon: fileUrl }
+          });
+        } else if ((usage === 'general' && assignTo === 'banner') || assignTo === 'banner' || assignTo === 'brandBanner' || usage === 'banner' || usage === 'brandBanner') {
+          console.log(`[API] Updating profile with brandBanner: ${fileUrl}`);
+          Database.updateProfile({
+            media: { brandBanner: fileUrl }
           });
         }
 

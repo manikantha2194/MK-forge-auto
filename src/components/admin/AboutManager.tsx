@@ -37,8 +37,9 @@ export const AboutManager: React.FC = () => {
     const activeToken = token || localStorage.getItem('mk_auth_token');
     setIsUploadingPhoto(true);
     const formData = new FormData();
-    formData.append('file', file);
     formData.append('usage', 'about');
+    formData.append('assignTo', 'aboutPhoto');
+    formData.append('file', file);
 
     try {
       const res = await apiFetch('/api/media/upload', {
@@ -49,6 +50,13 @@ export const AboutManager: React.FC = () => {
       const data = await res.json();
       if (res.ok && data.fileUrl) {
         setForm(prev => prev ? { ...prev, profileImage: data.fileUrl } : prev);
+        if (updateAboutConfig) {
+          await updateAboutConfig({ ...(form || {}), profileImage: data.fileUrl });
+        }
+        if (updateProfile) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await updateProfile({ media: { aboutPhoto: data.fileUrl } as any });
+        }
       }
     } catch {
       // Ignored

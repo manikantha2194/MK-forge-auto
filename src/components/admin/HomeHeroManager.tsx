@@ -35,8 +35,9 @@ export const HomeHeroManager: React.FC = () => {
     const activeToken = token || localStorage.getItem('mk_auth_token');
     setIsUploadingChar(true);
     const formData = new FormData();
-    formData.append('file', file);
     formData.append('usage', 'home-character');
+    formData.append('assignTo', 'heroCharacter');
+    formData.append('file', file);
 
     try {
       const res = await apiFetch('/api/media/upload', {
@@ -47,6 +48,13 @@ export const HomeHeroManager: React.FC = () => {
       const data = await res.json();
       if (res.ok && data.fileUrl) {
         setForm(prev => prev ? { ...prev, profileImage: data.fileUrl } : prev);
+        if (updateHeroConfig) {
+          await updateHeroConfig({ ...(form || {}), profileImage: data.fileUrl });
+        }
+        if (updateProfile) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await updateProfile({ media: { heroCharacter: data.fileUrl } as any });
+        }
       }
     } catch {
       // Ignored
